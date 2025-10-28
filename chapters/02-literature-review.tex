@@ -1,0 +1,66 @@
+\chapter{Literature Review}
+\label{chap:lit-review}
+
+This chapter provides a comprehensive review of the scholarly and technical literature pertinent to the core components of the TEKUTOKO platform. It examines four key domains: gamification in education, AI-driven content generation, anti-cheating mechanisms in online assessments, and modern architectural paradigms for web applications. The chapter culminates in a comparative analysis of existing platforms and a synthesis of identified research gaps that this thesis aims to address.
+
+\section{Gamification in Educational Technology}
+\label{sec:lit-gamification}
+Gamification is defined as the application of game-design elements and principles in non-game contexts to engage users and solve problems \citep{deterding2011}. In education, this approach is grounded in motivational psychology, particularly Self-Determination Theory (SDT), which posits that intrinsic motivation is fostered by satisfying three innate psychological needs: \textbf{autonomy} (the desire to control one's own actions), \textbf{competence} (the need to feel effective and master challenges), and \textbf{relatedness} (the urge to connect with others). A well-designed gamified system provides learners with choices (autonomy), offers achievable challenges with clear feedback and progress indicators (competence), and facilitates social interaction through leaderboards and team activities (relatedness) \citep{kapp2012}.
+
+A growing body of empirical research supports the efficacy of gamification. A meta-analysis by \citet{hamari2014} reviewed numerous studies and found that gamification generally yields positive effects on user engagement, motivation, and learning outcomes. However, they also cautioned that the context and implementation are crucial; poorly designed systems can be perceived as manipulative and may even decrease intrinsic motivation. Prominent platforms like \textbf{Duolingo} have successfully demonstrated the power of gamification by using streaks, experience points (XP), and competitive leagues to create a habit-forming language-learning experience. Similarly, \textbf{Kahoot!} has transformed classroom quizzes into fast-paced, competitive games, generating high levels of excitement and participation. TEKUTOKO draws inspiration from these models but aims to create a more integrated experience by linking gamified missions directly to tangible, configurable rewards and location-based activities.
+
+\section{AI in Educational Content Generation}
+\label{sec:lit-ai}
+The automatic generation of educational content has evolved significantly. Early systems relied on static templates and rule-based algorithms, which were limited in their flexibility and linguistic sophistication. The advent of generative AI, powered by Large Language Models (LLMs) built on the Transformer architecture (e.g., Google's Gemini, OpenAI's GPT series), has revolutionized this field \citep{brown2020}. These models can generate fluent, contextually appropriate text for a wide range of applications, including Automatic Question Generation (AQG).
+
+LLMs can be prompted to create diverse assessment items, including multiple-choice questions, short-answer prompts, and even complex scenarios. A particularly valuable capability is their ability to generate plausible "distractors" (incorrect options) for multiple-choice questions, a task that is often challenging and time-consuming for human educators \citep{gierl2013}. However, a key challenge in using AI for content generation is ensuring the quality, accuracy, and pedagogical soundness of the output. LLMs can sometimes "hallucinate" incorrect information or generate questions that are ambiguous. Therefore, a \textbf{"human-in-the-loop"} approach is widely considered essential. This model, implemented in TEKUTOKO, allows educators to review, edit, and approve AI-generated content before it is presented to learners, balancing the efficiency of automation with the need for academic rigor.
+
+\section{Anti-Cheating Mechanisms for Online Assessments}
+\label{sec:lit-proctoring}
+The credibility of online education hinges on the integrity of its assessment methods. The spectrum of anti-cheating solutions ranges from simple browser-based measures to sophisticated AI-powered proctoring.
+
+\textbf{Browser-based security measures} represent the first line of defense. These include disabling copy-paste functionality, locking the test to a full-screen window, and monitoring for tab or window focus changes using browser APIs. Studies have shown that even these basic measures can significantly deter casual or opportunistic cheating \citep{atterton2007}.
+
+More advanced systems involve \textbf{AI-powered online proctoring}, which typically uses webcam and microphone feeds to monitor students during an exam. These systems can detect suspicious behaviors such as looking away from the screen, the presence of another person, or the use of unauthorized materials. However, these solutions are often expensive and raise significant privacy and ethical concerns among students, which can lead to increased test anxiety \citep{ullah2021}.
+
+TEKUTOKO adopts a middle-ground approach: a lightweight, non-invasive, browser-based proctoring system. By focusing on behavior monitoring within the application itself (tab-switching, inactivity), it strikes a critical balance between maintaining academic integrity and respecting user privacy, making it suitable for a wider range of low- to medium-stakes educational and training scenarios.
+
+\section{Architectural Paradigms for Scalable Web Applications}
+\label{sec:lit-architecture}
+Software architecture is a critical determinant of a web application's ability to scale, evolve, and remain resilient. A \textbf{monolithic architecture} bundles all application components into a single, tightly coupled unit. While this approach can be simpler for small projects, it becomes unwieldy as the application grows, leading to development bottlenecks, complex deployments, and a single point of failure.
+
+In contrast, a \textbf{microservice architecture} structures an application as a collection of small, independent services, each responsible for a specific business capability. These services communicate with each other over a network, typically using lightweight protocols like REST APIs \citep{newman2015}. This approach offers several key benefits relevant to the EdTech domain:
+\begin{itemize}
+    \item \textbf{Independent Scalability:} Services can be scaled independently based on demand (e.g., scaling the quiz service during peak exam times).
+    \item \textbf{Technological Diversity:} Teams can use the best technology for a specific job (e.g., Python for document parsing, Node.js for real-time APIs).
+    \item \textbf{Improved Resilience:} The failure of a non-critical service does not bring down the entire application.
+\end{itemize}
+
+TEKUTOKO adopts a pragmatic microservice approach by separating the core backend logic (Node.js) from specialized, computationally intensive tasks like DOCX parsing (Python microservice), thereby gaining modularity and scalability without incurring the full operational complexity of a large-scale microservice deployment.
+
+\section{Comparative Analysis of Existing Platforms}
+\label{sec:lit-comparison}
+To position TEKUTOKO within the current EdTech landscape, a comparative analysis of several leading platforms is presented in Table \ref{tab:platform-comparison}.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparative Analysis of Existing EdTech Platforms}
+\label{tab:platform-comparison}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l p{3cm} p{3cm} p{3cm} p{3cm}}
+\toprule
+\textbf{Feature} & \textbf{Kahoot!} & \textbf{Quizlet} & \textbf{Google Classroom} & \textbf{TEKUTOKO (Proposed)} \\
+\midrule
+\textbf{Primary Focus} & Live, group-based quizzes & Flashcards \& individual study & Learning Management System (LMS) & Gamified missions, proctored tests, \& community events \\
+\addlinespace
+\textbf{Gamification} & High (points, leaderboards) & Medium (study games, streaks) & Low (assignment tracking) & \textbf{Very High} (missions, rewards, vouchers, GPS discovery) \\
+\addlinespace
+\textbf{AI Content Generation} & No & Yes (Magic Notes for study sets) & Limited (plagiarism check) & \textbf{Yes} (On-demand question generation from topics \& DOCX) \\
+\addlinespace
+\textbf{Anti-Cheating} & No (low-stakes focus) & No (self-study focus) & Limited (plagiarism detection) & \textbf{Yes} (Integrated browser-based proctoring) \\
+\addlinespace
+\textbf{Architecture} & Largely Monolithic & Microservice-based (partial) & Monolithic LMS framework & \textbf{Hybrid Microservice} (Node.js core + Python DOCX service) \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

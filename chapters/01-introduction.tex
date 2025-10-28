@@ -1,0 +1,104 @@
+\chapter{Introduction}
+\label{chap:introduction}
+
+\section{Background of the Study}
+\label{sec:intro_background}
+The landscape of global education is undergoing a seismic transformation, a process significantly accelerated by recent worldwide events and the relentless pace of technological innovation. The traditional paradigm of classroom-based instruction is increasingly being augmented, and in many cases replaced, by digital learning environments. This has propelled e-learning from a niche alternative to a mainstream pillar of educational delivery across academic, corporate, and vocational sectors. However, the rapid migration to online platforms has also cast a harsh light on the limitations of first-generation systems. Many of these platforms were designed as little more than digital repositories for static content, leading to passive, uninspiring learning experiences that result in high dropout rates and a demonstrable lack of student engagement \citep{lee2011}.
+
+In response to these deficiencies, two powerful technological and pedagogical trends have emerged as catalysts for the next generation of e-learning: \textbf{gamification} and \textbf{artificial intelligence (AI)}. Gamification, the strategic application of game-design elements and principles in non-game contexts, has been empirically shown to enhance learner motivation, knowledge retention, and overall engagement by tapping into intrinsic human desires for achievement, competition, and social connection \citep{deterding2011}. By embedding elements such as points, leaderboards, mission-based objectives, and tangible rewards, educators can transform learning from a passive chore into an active, enjoyable pursuit.
+
+Concurrently, breakthroughs in artificial intelligence, particularly in the domain of generative models and natural language processing (NLP), are unlocking unprecedented opportunities to automate, personalize, and enrich educational content. AI can now function as a powerful assistant for educators, capable of generating diverse, high-quality assessment questions, adapting content difficulty to individual learner needs, and providing instantaneous feedback. This technological leverage not only alleviates the significant administrative and content-creation burden on educators but also paves the way for a more tailored, efficient, and effective learning journey for students \citep{zawacki2019}.
+
+This thesis is situated at the confluence of these transformative trends. It is motivated by the critical need for a modern e-learning platform that moves beyond mere content delivery to offer a holistic, intelligent, and deeply engaging educational ecosystem. The TEKUTOKO project was conceived to address this need by designing and constructing a platform that synergistically integrates mission-based gamification with powerful AI-driven content generation, all underpinned by a robust, scalable, and modern software architecture.
+
+\section{Problem Statement}
+\label{sec:intro_problem}
+Despite the rapid proliferation of e-learning solutions, their effectiveness is frequently undermined by a set of persistent and interconnected challenges. This research identifies and directly addresses four primary problems that hinder the potential of digital education:
+
+\subsection{Low User Engagement in Conventional E-Learning}
+Many platforms fail to capture and sustain learner interest, leading to passive consumption of information rather than active, cognitive participation. This lack of engagement is a primary contributor to poor learning outcomes and high attrition rates \citep{fredricks2004}. The absence of interactive, motivating, and socially engaging elements makes online learning feel isolating and tedious.
+
+\subsection{High Content Creation Overhead for Educators}
+The process of creating high-quality, diverse, and stimulating educational content—especially varied quizzes, assessments, and interactive activities—is an exceptionally time-consuming and labor-intensive task for educators. This significant overhead often leads to a reliance on static, repetitive materials that quickly become outdated, fail to challenge learners appropriately, and are easily shared, compromising assessment integrity.
+
+\subsection{Pervasive Academic Dishonesty in Online Assessments}
+The remote and often unsupervised nature of online testing presents profound challenges to upholding academic integrity. It is exceedingly difficult to prevent various forms of cheating, such as unauthorized collaboration, use of external resources (e.g., search engines, notes), or identity misrepresentation. This issue erodes the validity of online assessments and devalues the qualifications obtained through them. While sophisticated proctoring solutions exist, they frequently entail high costs, technical complexity, and significant user privacy concerns \citep{ullah2021}.
+
+\subsection{Architectural Rigidity of Monolithic EdTech Systems}
+Many legacy and even contemporary e-learning systems are built using monolithic architectures, where all functional components are tightly coupled into a single, large codebase. While seemingly simpler to develop initially, these systems become exceedingly difficult to scale, update, and maintain as they grow. This architectural rigidity stifles innovation, slows the deployment of new features, and makes the entire system vulnerable to failure if a single component malfunctions \citep{newman2015}.
+
+This thesis posits that these four problems are not independent but are deeply intertwined. The TEKUTOKO platform is therefore designed as a holistic solution to address these interconnected challenges simultaneously.
+
+\section{Research Objectives}
+\label{sec:intro_objectives}
+The primary objective of this research is to design, implement, and rigorously evaluate the TEKUTOKO platform, a multifaceted e-learning system featuring deep gamification, AI-driven content generation, integrated proctoring, and a scalable microservice architecture.
+
+To achieve this overarching goal, the following specific objectives are defined:
+\begin{enumerate}
+    \item \textbf{To design and develop a web platform that integrates deep gamification principles} (e.g., mission-based rooms, competitive leaderboards, digital vouchers, and location-based discovery) to demonstrably enhance user engagement and motivation.
+    \item \textbf{To implement and evaluate an AI-powered module} that automatically generates diverse, high-quality quiz questions from educator-provided topics or documents, aiming to significantly reduce the content creation workload.
+    \item \textbf{To integrate a non-invasive, browser-based anti-cheating system} (proctoring) capable of monitoring and logging suspicious activities like tab-switching and user inactivity to improve the integrity of online assessments.
+    \item \textbf{To architect the entire system using a microservice-based approach} to ensure high levels of scalability, maintainability, and resilience, providing a robust foundation for future expansion.
+    \item \textbf{To empirically evaluate the platform's effectiveness} through a mixed-methods approach, measuring its impact on user engagement, educator efficiency, system performance, and the quality of its core features.
+\end{enumerate}
+
+\section{Research Questions}
+\label{sec:intro_questions}
+This research aims to provide evidence-based answers to the following key questions:
+\begin{itemize}
+    \item \textbf{RQ1:} To what extent does the integration of gamified, mission-based activities and reward systems within the TEKUTOKO platform improve user engagement and perceived usability when compared to traditional e-learning interfaces?
+    \item \textbf{RQ2:} How effective and reliable is the AI-driven question generation module in producing pedagogically sound and contextually relevant assessment content, and to what degree does it reduce the time and effort required for educators to create online tests?
+    \item \textbf{RQ3:} How effective is the lightweight, browser-based proctoring system in accurately detecting and deterring common forms of academic dishonesty during online assessments, and does it provide a viable alternative to more invasive methods?
+    \item \textbf{RQ4:} Does the adoption of a microservice-based architecture provide quantifiable benefits in terms of system performance, horizontal scalability, and ease of maintenance for a real-time, feature-rich EdTech platform like TEKUTOKO?
+\end{itemize}
+
+\section{Significance and Contributions}
+\label{sec:intro_contributions}
+This research offers significant contributions to both the theoretical understanding and practical application of technology in education.
+
+\subsection{Theoretical Contributions}
+\begin{itemize}
+    \item \textbf{Integrated Framework:} This thesis proposes and validates a novel framework that synergistically combines gamification theory, AI in education, online proctoring principles, and modern software architecture. It provides a scholarly examination of how these distinct fields can be interwoven to create a more effective, engaging, and secure learning ecosystem.
+    \item \textbf{Empirical Evidence:} The study contributes new empirical data on the measurable impact of AI-driven content generation on the educational workflow and the effects of mission-based gamification and lightweight proctoring on user behavior and academic integrity.
+\end{itemize}
+
+\subsection{Practical Contributions}
+\begin{itemize}
+    \item \textbf{A Functional Platform Prototype:} The TEKUTOKO platform itself serves as a tangible, open-source proof-of-concept that can be used, tested, and extended by educators, trainers, and developers.
+    \item \textbf{Architectural Blueprint:} The detailed design of TEKUTOKO provides a practical architectural blueprint for building scalable, resilient, and maintainable next-generation e-learning systems, offering valuable insights for the EdTech industry.
+    \item \textbf{Validated AI and Proctoring Applications:} The project serves as a real-world case study on the practical application of a large language model for educational content creation and a browser-based system for ensuring assessment integrity, highlighting benefits, limitations, and best practices.
+\end{itemize}
+
+\section{Scope and Limitations}
+\label{sec:intro_scope}
+The scope of this project encompasses the end-to-end development lifecycle of the TEKUTOKO platform, from conceptualization and design to implementation and evaluation.
+
+\textbf{In Scope:}
+\begin{itemize}
+    \item \textbf{Core Functionality:} User authentication, creation/management of quiz rooms and proctored test rooms, AI question generation from topics and DOCX files, a digital voucher reward system with QR code verification, GPS-based room discovery, and a user profile/social system.
+    \item \textbf{Technology Stack:} The implementation is based on the specified stack: React.js, Node.js/Express, Python, MySQL, and Firebase.
+    \item \textbf{Proctoring:} The anti-cheating system's scope is focused on browser-level monitoring of tab-switching, inactivity, and other suspicious browser events.
+    \item \textbf{Evaluation:} The evaluation is conducted within a controlled environment with university students as the primary user group.
+\end{itemize}
+
+\textbf{Limitations:}
+\begin{itemize}
+    \item \textbf{AI Content Specialization:} The AI's ability to generate high-quality content for extremely specialized, technical, or abstract academic domains is not exhaustively tested and is dependent on the underlying LLM's capabilities.
+    \item \textbf{Proctoring Sophistication:} The anti-cheating system is designed as a deterrent and is not foolproof. It cannot prevent cheating that occurs "off-screen," such as using a secondary device or receiving in-person assistance.
+    \item \textbf{Generalizability of User Study:} The user study is conducted with a limited sample size from a specific demographic. The findings may not be directly generalizable to other learner populations, such as K-12 students or corporate professionals, without further research.
+    \item \textbf{Long-Term Scalability Testing:} While the architecture is designed for scalability, the platform has not been tested in a massive, production-level environment with thousands of simultaneous users over an extended period.
+\end{itemize}
+
+\section{Thesis Structure}
+\label{sec:intro_structure}
+This thesis is organized into eight chapters, each building upon the last to present a comprehensive and logical account of the research project.
+\begin{itemize}
+    \item \textbf{Chapter 1: Introduction} establishes the context, defines the core problems, and outlines the objectives, research questions, and significance of the study.
+    \item \textbf{Chapter 2: Literature Review} surveys existing academic and technical literature on gamification, AI in education, anti-cheating systems, and software architecture, identifying the research gaps this project addresses.
+    \item \textbf{Chapter 3: System Analysis and Requirements} details the functional and non-functional requirements of the TEKUTOKO platform and presents a thorough use case analysis.
+    \item \textbf{Chapter 4: System Design and Architecture} describes the technical blueprint of the system, including the high-level architecture, database schema, and API specifications.
+    \item \textbf{Chapter 5: Implementation} discusses the specific technologies used and provides key implementation details of the platform's various components, illustrated with code snippets.
+    \item \textbf{Chapter 6: Experiment and Evaluation} outlines the testing methodology, defines the evaluation metrics, and presents and analyzes the results from the user studies and performance tests.
+    \item \textbf{Chapter 7: Discussion} interprets the findings in the context of the research questions, compares them with existing literature, and reflects on the project's strengths and limitations.
+    \item \textbf{Chapter 8: Conclusion and Future Work} summarizes the research contributions and proposes concrete directions for future development and research.
+\end{itemize}

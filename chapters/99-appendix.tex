@@ -1,0 +1,120 @@
+\chapter{User Survey Questionnaire}
+\label{app:sus}
+
+\section*{System Usability Scale (SUS)}
+\textit{Instructions: For each of the following statements, please mark one box that best represents your agreement.} \\
+(Scale: 1 = Strongly Disagree, 5 = Strongly Agree)
+
+\begin{enumerate}
+    \item I think that I would like to use this system frequently.
+    \item I found the system unnecessarily complex.
+    \item I thought the system was easy to use.
+    \item I think that I would need the support of a technical person to be able to use this system.
+    \item I found the various functions in this system were well integrated.
+    \item I thought there was too much inconsistency in this system.
+    \item I would imagine that most people would learn to use this system very quickly.
+    \item I found the system very cumbersome to use.
+    \item I felt very confident using the system.
+    \item I needed to learn a lot of things before I could get going with this system.
+\end{enumerate}
+
+\cleardoublepage
+
+\chapter{Full Database Schema}
+\label{app:db-schema}
+
+\begin{lstlisting}[language=SQL, caption={Full Database SQL Schema for TEKUTOKO}]
+-- Main Users Table
+CREATE TABLE `users` (
+  `user_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `username` VARCHAR(50) NOT NULL UNIQUE,
+  `email` VARCHAR(100) NOT NULL UNIQUE,
+  `password_hash` VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- User Profiles Table
+CREATE TABLE `profiles` (
+  `user_id` INT PRIMARY KEY,
+  `full_name` VARCHAR(100),
+  `avatar_url` TEXT,
+  `bio` TEXT,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
+);
+
+-- Rooms Table
+CREATE TABLE `rooms` (
+  `room_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `host_id` INT NOT NULL,
+  `room_code` VARCHAR(8) NOT NULL UNIQUE,
+  `title` VARCHAR(255) NOT NULL,
+  `description` TEXT,
+  `room_type` ENUM('quiz', 'test') NOT NULL,
+  `gps_lat` DECIMAL(10, 8) NULL,
+  `gps_lng` DECIMAL(11, 8) NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`host_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
+);
+
+-- Questions Table
+CREATE TABLE `questions` (
+  `question_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `room_id` INT NOT NULL,
+  `question_text` TEXT NOT NULL,
+  `question_type` ENUM('multiple-choice', 'text', 'upload') NOT NULL,
+  `correct_answer_text` TEXT,
+  `explanation` TEXT,
+  FOREIGN KEY (`room_id`) REFERENCES `rooms`(`room_id`) ON DELETE CASCADE
+);
+
+-- Options for Multiple-Choice Questions
+CREATE TABLE `options` (
+  `option_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `question_id` INT NOT NULL,
+  `option_text` TEXT NOT NULL,
+  `is_correct` BOOLEAN NOT NULL DEFAULT FALSE,
+  FOREIGN KEY (`question_id`) REFERENCES `questions`(`question_id`) ON DELETE CASCADE
+);
+
+-- Submissions Table
+CREATE TABLE `submissions` (
+  `submission_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `question_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `room_id` INT NOT NULL,
+  `answer_text` TEXT,
+  `answer_file_url` TEXT,
+  `is_correct` BOOLEAN,
+  `score_awarded` INT DEFAULT 0,
+  `submitted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`question_id`) REFERENCES `questions`(`question_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`),
+  FOREIGN KEY (`room_id`) REFERENCES `rooms`(`room_id`) ON DELETE CASCADE
+);
+
+-- Vouchers Table
+CREATE TABLE `vouchers` (
+  `voucher_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `room_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `qr_code_data` VARCHAR(255) NOT NULL UNIQUE,
+  `reward_description` TEXT NOT NULL,
+  `is_redeemed` BOOLEAN NOT NULL DEFAULT FALSE,
+  `issued_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `redeemed_at` TIMESTAMP NULL,
+  FOREIGN KEY (`room_id`) REFERENCES `rooms`(`room_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
+);
+
+-- Proctoring Logs Table
+CREATE TABLE `proctoring_logs` (
+  `log_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `room_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `event_type` ENUM('tab_switch', 'inactivity', 'paste_attempt') NOT NULL,
+  `details` TEXT,
+  `event_timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`room_id`) REFERENCES `rooms`(`room_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
+);
+\end{lstlisting}

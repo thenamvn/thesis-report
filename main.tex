@@ -1,0 +1,155 @@
+\documentclass[12pt, a4paper, oneside]{report}
+
+% =================== PACKAGES ===================
+\usepackage{tabularx} % trong preamble
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel} % Or [vietnamese] if needed
+\usepackage{graphicx}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{listings} % For code blocks
+\usepackage{xcolor}
+\usepackage{hyperref} % For clickable links, should be last
+\usepackage{tocbibind} % Add ToC, LoF, LoT, Bib to the Table of Contents
+\usepackage{booktabs} % For professional tables
+\usepackage{longtable} % ADD THIS LINE for tables that span multiple pages
+\usepackage{placeins} % thêm ở phần preamble
+% =================== CITATION STYLE (APA-like) ===================
+\usepackage{csquotes}
+\usepackage[round]{natbib}  % round = (Author, Year), tương tự APA
+\bibliographystyle{apalike} % hoặc plainnat
+\usepackage[strings]{underscore}
+% JSON, JavaScript, JSX syntax highlighting
+\lstdefinelanguage{JSON}{
+	basicstyle=\ttfamily\small,
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	stepnumber=1,
+	numbersep=8pt,
+	showstringspaces=false,
+	breaklines=true,
+	frame=single,
+	morestring=[b]",
+	stringstyle=\color{green!50!black},
+	literate=
+	*{0}{{{\color{blue}0}}}{1}
+	{1}{{{\color{blue}1}}}{1}
+	{2}{{{\color{blue}2}}}{1}
+	{3}{{{\color{blue}3}}}{1}
+	{4}{{{\color{blue}4}}}{1}
+	{5}{{{\color{blue}5}}}{1}
+	{6}{{{\color{blue}6}}}{1}
+	{7}{{{\color{blue}7}}}{1}
+	{8}{{{\color{blue}8}}}{1}
+	{9}{{{\color{blue}9}}}{1}
+}
+
+\lstdefinelanguage{JavaScript}{
+	keywords={await, break, case, catch, class, const, continue, debugger, default, delete, do, else, export, extends, finally, for, from, function, if, import, in, instanceof, let, new, return, super, switch, this, throw, try, typeof, var, void, while, with, yield},
+	keywordstyle=\color{blue}\bfseries,
+	ndkeywords={boolean, throw, export, import, this},
+	ndkeywordstyle=\color{violet}\bfseries,
+	identifierstyle=\color{black},
+	sensitive=false,
+	comment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	commentstyle=\color{gray}\ttfamily,
+	stringstyle=\color{orange}\ttfamily,
+	morestring=[b]',
+	morestring=[b]"
+}
+
+\lstdefinelanguage{JSX}[]{JavaScript}{
+	morekeywords={useState,useEffect,props,React,return,div,span,input,button},
+}
+
+% =================== HYPERREF SETUP ===================
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=blue,
+    citecolor=black,
+}
+
+% =================== CODE LISTING STYLE ===================
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% =================== THESIS INFORMATION ===================
+\title{
+    \vspace{-3cm} % Adjust spacing to move title up
+    \includegraphics[width=4cm]{figures/vju-logo.png} % Optional: Add university logo
+    \vspace{1cm} \\
+    \textbf{TEKUTOKO: A Microservice-Based Gamified E-Learning Platform with AI-Driven Content Generation and Integrated Proctoring}
+}
+\author{
+    \textbf{NGUYEN THE NAM} \\
+    Student ID: 22110158 \\
+    \vspace{2cm} \\
+    A Thesis Submitted to the Faculty of Information Technology \\
+    VIETNAM-JAPAN UNIVERSITY, VIETNAM NATIONAL UNIVERSITY \\
+    \vspace{1cm} \\
+    In Partial Fulfillment of the Requirements \\
+    for the Degree of \\
+    \textbf{BACHELOR OF SCIENCE} \\
+    in \\
+    \textbf{COMPUTER SCIENCE AND INFORMATION TECHNOLOGY} \\
+    \vspace{2cm} \\
+    Supervisor: \textbf{Dr. [Supervisor Name]}
+}
+\date{\textbf{Hanoi, October 2025}}
+
+% =================== DOCUMENT START ===================
+\begin{document}
+
+\maketitle
+\pagenumbering{roman} % Roman numerals for preface
+
+\include{chapters/00-preface}
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\cleardoublepage
+\pagenumbering{arabic} % Arabic numerals for main content
+
+\include{chapters/01-introduction}
+\include{chapters/02-literature-review}
+\include{chapters/03-requirements}
+\include{chapters/04-architecture}
+\include{chapters/05-implementation}
+\include{chapters/06-evaluation}
+\include{chapters/07-discussion}
+\include{chapters/08-conclusion}
+
+\bibliography{references}  % references.bib
+
+\appendix
+\include{chapters/99-appendix}
+
+\end{document}
