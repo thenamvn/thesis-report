@@ -34,7 +34,7 @@ The main components are the React frontend, a core Node.js backend API, a specia
 
     \item \textbf{Backend (Node.js/Express):} The central nervous system of the platform. Its responsibilities include providing RESTful API endpoints, managing JWT-based authentication, handling business logic for all core features, and orchestrating calls to other services.
 
-    \item \textbf{Python Microservice (Flask):} A lightweight, specialized service whose sole responsibility is to parse `.docx` files. It exposes a single API endpoint that accepts a file, extracts its structure and text, and returns a standardized JSON object. This isolates a specific, complex dependency.
+    \item \textbf{Python Microservice (FastAPI/Flask):} A specialized service responsible for the complex task of processing `.docx` files. Its sole purpose is to accept a document, extract questions, options, and images, and convert them into a structured JSON format ready for serving. It orchestrates external command-line tools like \textbf{Pandoc} for document structure conversion and \textbf{ImageMagick} for image format transcoding (e.g., WMF/EMF to WebP). The processed output is stored in a static directory, served via HTTP, and its metadata is recorded in the database.
 
     \item \textbf{MySQL Database:} A relational database for all structured, persistent data. This includes user accounts, room configurations, questions, submissions, reward vouchers, and proctoring logs. The relational model ensures data integrity.
 
@@ -126,7 +126,7 @@ The system exposes a RESTful API for communication between the frontend and back
 `POST` & `/auth/login` & Authenticate a user and return a JWT. & No \\
 `POST` & `/api/rooms` & Create a new Quiz or Test Room. & Yes \\
 `POST` & `/api/rooms/generate-ai` & Generate questions for a room using AI. & Yes \\
-`POST` & `/api/rooms/upload-docx` & Upload a DOCX file to create a test. & Yes \\
+`POST` & `/api/v1/process-docx` & Upload a DOCX file for processing by the Python microservice. & Yes \\
 `GET` & `/api/rooms/:roomCode` & Get public details for a specific room. & No \\
 `POST` & `/api/rooms/:roomCode/submit` & Submit an answer to a question. & Yes \\
 `POST` & `/api/rooms/:roomCode/log-proctor-event` & Log a suspicious event from a Test Room. & Yes \\
@@ -178,5 +178,5 @@ The following example shows the interaction for logging a proctoring event.
 \begin{itemize}
     \item \textbf{Stateless Backend:} The Node.js API server is designed to be completely stateless. It does not store any session-specific data in memory, allowing requests from a single user to be distributed across any available server instance.
     \item \textbf{Database Scaling:} The MySQL database can be scaled vertically (more powerful hardware) or horizontally using read replicas to distribute read-heavy query loads.
-    \item \textbf{Independent Microservice Scaling:} If DOCX parsing becomes a bottleneck, the Python microservice can be scaled independently by deploying more instances, without affecting the performance of the core Node.js application.
+    \item \textbf{Independent Microservice Scaling:} If DOCX parsing becomes a bottleneck, the Python microservice can be scaled independently by deploying more instances, without affecting the performance of the core Node.js application. This is crucial as document and image processing are CPU-intensive tasks.
 \end{itemize}

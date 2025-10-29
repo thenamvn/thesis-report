@@ -9,20 +9,19 @@ The technology stack was selected to optimize for developer productivity, perfor
 
 \begin{longtable}{p{3cm} p{3cm} p{8cm}}
 \caption{Technology Stack and Rationale} \label{tab:tech-stack} \\
-
 \toprule
 \textbf{Component} & \textbf{Technology / Library} & \textbf{Rationale} \\
 \midrule
 \endfirsthead
 
+\multicolumn{3}{l}{\tablename\ \thetable{}: Technology Stack and Rationale \textit{(continued)}} \\
 \toprule
 \textbf{Component} & \textbf{Technology / Library} & \textbf{Rationale} \\
 \midrule
 \endhead
 
 \midrule
-\multicolumn{3}{r}{\textit{(continued on next page)}} \\[0.5em]
-\midrule
+\multicolumn{3}{r}{\textit{(continued on next page)}} \\
 \endfoot
 
 \bottomrule
@@ -38,8 +37,8 @@ A utility-first CSS framework that enables rapid, consistent, and responsive UI 
 \textbf{Backend (Core)} & \textbf{Node.js / Express.js} &
 A lightweight and efficient JavaScript runtime, ideal for building fast, scalable, and I/O-intensive REST APIs and handling real-time connections. \\[0.5em]
 
-\textbf{Backend (Microservice)} & \textbf{Python 3 / Flask} &
-A minimalist and robust framework for building the specialized DOCX parsing microservice, leveraging Python's strong data processing libraries. \\[0.5em]
+\textbf{Backend (Microservice)} & \textbf{Python 3 / FastAPI} &
+A high-performance and robust framework for building the specialized DOCX parsing microservice, leveraging Python's strong ecosystem for data processing and managing external processes. \\[0.5em]
 
 \textbf{Database} & \textbf{MySQL} &
 A reliable, widely-used relational database system that ensures data integrity and supports complex queries required for analytics and user data management. \\[0.5em]
@@ -224,42 +223,95 @@ router.post('/verify', authMiddleware, async (req, res) => {
 \end{lstlisting}
 \FloatBarrier
 
-\section{Python Microservice Implementation}
+\section{Python Microservice for DOCX Processing}
 \label{sec:impl-python}
-The DOCX parsing microservice is a simple Flask application containerized with Docker. It exposes a single `/parse` endpoint that processes an uploaded file in-memory.
+The DOCX processing microservice is a critical component for handling user-generated content. It is a standalone Python application, containerized with Docker, that exposes a single API endpoint (`/api/v1/process-docx`) to perform a multi-step processing pipeline.
+
+\subsection{The DOCX-to-JSON Pipeline}
+The core logic of the microservice follows a strict sequence of operations to ensure reliable and consistent output. The entire flow is orchestrated by the `DocxService` class. The process is visualized in the flowchart below.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/python-microservice-flow.png}
+\caption{Flowchart of the DOCX Processing Pipeline}
+\label{fig:python-microservice-flow}
+\end{figure}
 
 \FloatBarrier
-\begin{lstlisting}[language=Python, caption={Core logic of the Flask-based DOCX parsing microservice.}]
-from flask import Flask, request, jsonify
-from docx import Document
-import io
+\subsection{Orchestration and External Dependencies}
+A key implementation detail is the interaction with external command-line tools. The service does not perform conversions natively but rather acts as an orchestrator.
+\begin{itemize}
+    \item \textbf{Pandoc:} Invoked via the `pypandoc` library to handle the initial conversion from DOCX to LaTeX. The `--extract-media` flag is crucial as it automatically saves all embedded images into a specified directory.
+    \item \textbf{ImageMagick:} Called directly through Python's `subprocess` module. The `ImageUtils` class scans the extracted media directory for specific formats (like WMF, EMF) and uses a `ThreadPoolExecutor` to run multiple `magick convert` commands in parallel, significantly speeding up the processing of documents with many images.
+\end{itemize}
 
-app = Flask(__name__)
+The code in Listing \ref{lst:docx-service-py} illustrates how these steps are chained together within the main service class.
 
-@app.route('/parse', methods=['POST'])
-def parse_docx():
-    if 'file' not in request.files:
-        return jsonify({"error": "No file part in the request"}), 400
-    
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({"error": "No file selected"}), 400
+\FloatBarrier
+\begin{lstlisting}[language=Python, caption={Illustrative logic of the `DocxService` in the Python microservice.}, label={lst:docx-service-py}]
+import pypandoc
+import os
+from app.utils.image_utils import ImageUtils
+from app.services.database_service import DatabaseService
 
-    try:
-        # Read the file in-memory
-        doc = Document(io.BytesIO(file.read()))
-        questions = []
-        # Logic to parse paragraphs to extract questions and answers
-        for para in doc.paragraphs:
-            if para.text.strip().startswith("Q:"):
-                questions.append({"text": para.text.strip()})
+class DocxService:
+    def __init__(self, base_url: str):
+        self.base_url = base_url
+
+    def process_docx(self, input_path: str, uuid: str) -> dict:
+        """
+        Orchestrates the full DOCX processing pipeline.
+        """
+        output_dir = f"outputs/{uuid}"
+        media_dir = os.path.join(output_dir, "media")
         
-        return jsonify({"questions": questions}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Step 1: Convert DOCX to LaTeX and extract media using Pandoc
+        latex_output_path = os.path.join(output_dir, "output.tex")
+        self.convert_docx_to_latex(input_path, latex_output_path, media_dir)
+        
+        # Step 2: Convert extracted images (WMF/EMF) to WebP using ImageMagick
+        image_mapping = ImageUtils.convert_extracted_images(media_dir)
+        
+        # Step 3: Parse the intermediate LaTeX file to build a question structure
+        questions_data = self.parse_latex_to_json(latex_output_path)
+        
+        # Step 4: Update image sources in the JSON with the final public URLs
+        updated_questions = self.update_image_srcs(
+            questions_data, uuid, image_mapping
+        )
+        
+        # Step 5: Save the final JSON output
+        final_json_path = os.path.join(output_dir, "output.json")
+        self.save_output_json(updated_questions, final_json_path)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+        # Step 6: Create an entry in the database
+        DatabaseService.create_test_exam_room(uuid=uuid, title="Generated from DOCX")
+
+        # Clean up temporary files like the .tex file
+        os.remove(latex_output_path)
+        
+        return {"status": "success", "uuid": uuid}
+
+    def convert_docx_to_latex(self, input_path, output_path, media_dir):
+        # Wrapper for pypandoc call
+        pypandoc.convert_file(
+            input_path, 'latex',
+            outputfile=output_path,
+            extra_args=[f'--extract-media={media_dir}']
+        )
+
+    def parse_latex_to_json(self, latex_path):
+        # Complex logic to parse LaTeX and extract question/option blocks
+        # (Implementation omitted for brevity)
+        pass
+
+    def update_image_srcs(self, questions, uuid, mapping):
+        # Logic to iterate through questions and replace local image paths
+        # with final HTTP URLs using the self.base_url
+        # (Implementation omitted for brevity)
+        pass
+    
+    # ... other helper methods
 \end{lstlisting}
 \FloatBarrier
 
@@ -269,5 +321,5 @@ The deployment strategy is designed for automation, scalability, and separation 
 \begin{enumerate}
     \item \textbf{Frontend (React):} The project is linked to a GitHub repository. A push to the `main` branch automatically triggers a new build and deployment on \textbf{Vercel}. Vercel's global CDN ensures fast load times for users worldwide. Environment variables for the backend API URL are managed through the Vercel dashboard.
     
-    \item \textbf{Backend Services (Node.js \& Python):} Both the Node.js backend and the Python microservice are containerized using \textbf{Docker}. A `Dockerfile` in each service's directory defines its environment and dependencies. These container images are pushed to a container registry (like Docker Hub or Google Container Registry) and can be deployed to any container orchestration platform like Google Cloud Run or AWS Fargate. This allows them to be scaled independently based on traffic and ensures a consistent runtime environment from development to production.
+    \item \textbf{Backend Services (Node.js \& Python):} Both the Node.js backend and the Python microservice are containerized using \textbf{Docker}. A `Dockerfile` in each service's directory defines its environment and dependencies. This includes installing system-level dependencies like `pandoc` and `imagemagick` for the Python service. These container images are pushed to a container registry (like Docker Hub or Google Container Registry) and can be deployed to any container orchestration platform like Google Cloud Run or AWS Fargate. This allows them to be scaled independently based on traffic and ensures a consistent runtime environment from development to production.
 \end{enumerate}
