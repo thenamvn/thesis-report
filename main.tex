@@ -1,26 +1,29 @@
 \documentclass[12pt, a4paper, oneside]{report}
 
 % =================== PACKAGES ===================
-\usepackage{tabularx} % trong preamble
+\usepackage{tabularx}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[english]{babel} % Or [vietnamese] if needed
+\usepackage[english]{babel}
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\sloppy
 \usepackage{graphicx}
+\usepackage{times}         % Times New Roman
 \usepackage[a4paper, margin=1in]{geometry}
 \usepackage{amsmath, amssymb}
-\usepackage{listings} % For code blocks
+\usepackage{listings}
 \usepackage{xcolor}
-\usepackage{hyperref} % For clickable links, should be last
-\usepackage{tocbibind} % Add ToC, LoF, LoT, Bib to the Table of Contents
-\usepackage{booktabs} % For professional tables
-\usepackage{longtable} % ADD THIS LINE for tables that span multiple pages
-\usepackage{placeins} % thêm ở phần preamble
-% =================== CITATION STYLE (APA-like) ===================
+\usepackage{hyperref}
+\usepackage{tocbibind}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{placeins}
 \usepackage{csquotes}
-\usepackage[round]{natbib}  % round = (Author, Year), tương tự APA
-\bibliographystyle{apalike} % hoặc plainnat
+\usepackage[round]{natbib}
+\bibliographystyle{apalike}
 \usepackage[strings]{underscore}
-% JSON, JavaScript, JSX syntax highlighting
+
 \lstdefinelanguage{JSON}{
 	basicstyle=\ttfamily\small,
 	numbers=left,
@@ -101,55 +104,53 @@
 
 % =================== THESIS INFORMATION ===================
 \title{
-    \vspace{-3cm} % Adjust spacing to move title up
-    \includegraphics[width=4cm]{figures/vju-logo.png} % Optional: Add university logo
-    \vspace{1cm} \\
-    \textbf{TEKUTOKO: A Microservice-Based Gamified E-Learning Platform with AI-Driven Content Generation and Integrated Proctoring}
+	\vspace{-3cm}
+	\includegraphics[width=4cm]{figures/vju-logo.png} \\[1cm]
+	\textbf{TEKUTOKO: A Microservice-Based Gamified E-Learning Platform\\
+		with AI-Driven Content Generation and Integrated Proctoring}
 }
 \author{
-    \textbf{NGUYEN THE NAM} \\
-    Student ID: 22110158 \\
-    \vspace{2cm} \\
-    A Thesis Submitted to the Faculty of Information Technology \\
-    VIETNAM-JAPAN UNIVERSITY, VIETNAM NATIONAL UNIVERSITY \\
-    \vspace{1cm} \\
-    In Partial Fulfillment of the Requirements \\
-    for the Degree of \\
-    \textbf{BACHELOR OF SCIENCE} \\
-    in \\
-    \textbf{COMPUTER SCIENCE AND INFORMATION TECHNOLOGY} \\
-    \vspace{2cm} \\
-    Supervisor: \textbf{Dr. [Supervisor Name]}
+	\textbf{NGUYEN THE NAM} \\[0.3cm]
+	Student ID: 22110158 \\[1.5cm]
+	A Thesis Submitted to the Faculty of Information Technology \\[0.3cm]
+	VIETNAM JAPAN UNIVERSITY, VIETNAM NATIONAL UNIVERSITY \\[1cm]
+	In Partial Fulfillment of the Requirements for the Degree of \\[0.3cm]
+	\textbf{BACHELOR OF SCIENCE} \\[0.3cm]
+	in \\[0.3cm]
+	\textbf{COMPUTER SCIENCE AND INFORMATION TECHNOLOGY} \\[2cm]
+	Supervisor: \textbf{Dr. [Supervisor Name]}
 }
 \date{\textbf{Hanoi, October 2025}}
 
 % =================== DOCUMENT START ===================
 \begin{document}
-
-\maketitle
-\pagenumbering{roman} % Roman numerals for preface
-
-\include{chapters/00-preface}
-
-\tableofcontents
-\listoffigures
-\listoftables
-
-\cleardoublepage
-\pagenumbering{arabic} % Arabic numerals for main content
-
-\include{chapters/01-introduction}
-\include{chapters/02-literature-review}
-\include{chapters/03-requirements}
-\include{chapters/04-architecture}
-\include{chapters/05-implementation}
-\include{chapters/06-evaluation}
-\include{chapters/07-discussion}
-\include{chapters/08-conclusion}
-
-\bibliography{references}  % references.bib
-
-\appendix
-\include{chapters/99-appendix}
-
+	
+	\maketitle
+	\pagenumbering{roman}
+	
+	% ======= FRONT MATTER =======
+	\include{chapters/00-preface}       % (Lời cảm ơn hoặc abstract)
+	\cleardoublepage
+	
+	\tableofcontents
+	\listoffigures
+	\listoftables
+	\cleardoublepage
+	
+	% ======= MAIN CONTENT =======
+	\pagenumbering{arabic}
+	\include{chapters/01-introduction}
+	\include{chapters/02-literature-review}
+	\include{chapters/03-requirements}
+	\include{chapters/04-architecture}
+	\include{chapters/05-implementation}
+	\include{chapters/06-evaluation}
+	\include{chapters/07-discussion}
+	\include{chapters/08-conclusion}
+	
+	% ======= REFERENCES =======
+	\bibliography{references}
+	
+	% ======= APPENDICES =======
+	
 \end{document}
