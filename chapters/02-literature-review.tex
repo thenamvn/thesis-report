@@ -44,23 +44,50 @@ To position TEKUTOKO within the current EdTech landscape, a comparative analysis
 
 \begin{table}[htbp]
 \centering
+\renewcommand{\arraystretch}{1.5} % tăng khoảng cách giữa các hàng
+\setlength{\tabcolsep}{8pt} % tăng khoảng cách giữa các cột
 \caption{Comparative Analysis of Existing EdTech Platforms}
 \label{tab:platform-comparison}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{l p{3cm} p{3cm} p{3cm} p{3cm}}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.8cm} 
+                >{\centering\arraybackslash}p{3.2cm} 
+                >{\centering\arraybackslash}p{3.2cm} 
+                >{\centering\arraybackslash}p{3.2cm} 
+                >{\centering\arraybackslash}p{3.2cm}}
 \toprule
 \textbf{Feature} & \textbf{Kahoot!} & \textbf{Quizlet} & \textbf{Google Classroom} & \textbf{TEKUTOKO (Proposed)} \\
 \midrule
-\textbf{Primary Focus} & Live, group-based quizzes & Flashcards \& individual study & Learning Management System (LMS) & Gamified missions, proctored tests, \& community events \\
-\addlinespace
-\textbf{Gamification} & High (points, leaderboards) & Medium (study games, streaks) & Low (assignment tracking) & \textbf{Very High} (missions, rewards, vouchers, GPS discovery) \\
-\addlinespace
-\textbf{AI Content Generation} & No & Yes (Magic Notes for study sets) & Limited (plagiarism check) & \textbf{Yes} (On-demand question generation from topics \& DOCX) \\
-\addlinespace
-\textbf{Anti-Cheating} & No (low-stakes focus) & No (self-study focus) & Limited (plagiarism detection) & \textbf{Yes} (Integrated browser-based proctoring) \\
-\addlinespace
-\textbf{Architecture} & Largely Monolithic & Microservice-based (partial) & Monolithic LMS framework & \textbf{Hybrid Microservice} (Node.js core + Python DOCX service) \\
+\textbf{Primary Focus} & 
+Live, group-based quizzes & 
+Flashcards \& individual study & 
+Learning Management System (LMS) & 
+Gamified missions, proctored tests, \& community events \\
+
+\textbf{Gamification} & 
+High (points, leaderboards) & 
+Medium (study games, streaks) & 
+Low (assignment tracking) & 
+\textbf{Very High} (missions, rewards, vouchers, GPS discovery) \\
+
+\textbf{AI Content Generation} & 
+No & 
+Yes (Magic Notes for study sets) & 
+Limited (plagiarism check) & 
+\textbf{Yes} (On-demand question generation from topics \& DOCX) \\
+
+\textbf{Anti-Cheating} & 
+No (low-stakes focus) & 
+No (self-study focus) & 
+Limited (plagiarism detection) & 
+\textbf{Yes} (Integrated browser-based proctoring) \\
+
+\textbf{Architecture} & 
+Largely Monolithic & 
+Microservice-based (partial) & 
+Monolithic LMS framework & 
+\textbf{Hybrid Microservice} (Node.js core + Python DOCX service) \\
 \bottomrule
 \end{tabular}%
 }
 \end{table}
+

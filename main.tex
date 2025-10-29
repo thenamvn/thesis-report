@@ -5,6 +5,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
+\usepackage{microtype}
 \hyphenpenalty=10000
 \exhyphenpenalty=10000
 \sloppy
@@ -88,17 +89,22 @@
     keywordstyle=\color{magenta},
     numberstyle=\tiny\color{codegray},
     stringstyle=\color{codepurple},
-    basicstyle=\ttfamily\footnotesize,
+    basicstyle=\ttfamily\scriptsize,        % Giảm từ \footnotesize xuống \scriptsize
     breakatwhitespace=false,         
-    breaklines=true,                 
+    breaklines=true,                        % Đã có
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}, % Thêm mũi tên khi xuống dòng
     captionpos=b,                    
     keepspaces=true,                 
     numbers=left,                    
-    numbersep=5pt,                  
+    numbersep=5pt,
+    xleftmargin=2em,                        % Thêm margin trái
+    framexleftmargin=1.5em,                 % Căn chỉnh frame
     showspaces=false,                
     showstringspaces=false,
     showtabs=false,                  
-    tabsize=2
+    tabsize=2,
+    columns=flexible,                       % Thêm để xử lý spacing tốt hơn
+    breakindent=1.5em                       % Thụt lề khi xuống dòng
 }
 \lstset{style=mystyle}
 

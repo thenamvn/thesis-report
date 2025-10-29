@@ -7,21 +7,29 @@ This chapter details the technical implementation of the TEKUTOKO platform, tran
 \label{sec:impl-stack}
 The technology stack was selected to optimize for developer productivity, performance, scalability, and a rich, modern user experience. The key technologies are summarized in Table \ref{tab:tech-stack}.
 
-\begin{longtable}{p{3cm} p{3cm} p{8cm}}
-\caption{Technology Stack and Rationale} \label{tab:tech-stack} \\
+\renewcommand{\arraystretch}{1.5} % tăng giãn dòng giữa các hàng
+\setlength{\tabcolsep}{8pt} % tăng khoảng cách giữa các cột
+\begin{longtable}{
+>{\raggedright\arraybackslash}p{2.8cm} 
+>{\centering\arraybackslash}p{3.2cm} 
+>{\raggedright\arraybackslash}p{8cm}}
+
+\caption{Technology Stack and Rationale} 
+\label{tab:tech-stack} \\
+
 \toprule
 \textbf{Component} & \textbf{Technology / Library} & \textbf{Rationale} \\
 \midrule
 \endfirsthead
 
-\multicolumn{3}{l}{\tablename\ \thetable{}: Technology Stack and Rationale \textit{(continued)}} \\
+\multicolumn{3}{l}{\tablename\ \thetable{}: Technology Stack and Rationale \textit{(continued)}} \\[0.25em]
 \toprule
 \textbf{Component} & \textbf{Technology / Library} & \textbf{Rationale} \\
 \midrule
 \endhead
 
 \midrule
-\multicolumn{3}{r}{\textit{(continued on next page)}} \\
+\multicolumn{3}{r}{\textit{(continued on next page)}} \\ 
 \endfoot
 
 \bottomrule
@@ -54,6 +62,7 @@ Vercel provides seamless CI/CD and optimized hosting for the React frontend.
 Docker is used to containerize the backend services for consistent, portable deployment. \\[0.5em]
 
 \end{longtable}
+
 
 
 \section{Frontend Implementation (React.js)}
