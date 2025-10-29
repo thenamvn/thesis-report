@@ -8,3 +8,5 @@
 *.lof
 *.lot
 *.pdf
+*.fdb_latexmk
+*.fls
