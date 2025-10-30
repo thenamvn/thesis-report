@@ -17,14 +17,14 @@ The requirements for the TEKUTOKO platform were gathered and refined through a m
 \label{sec:func-req}
 Functional requirements describe the specific behaviors, features, and functions the system must perform. They are detailed in Table \ref{tab:func-req}.
 
-\begin{longtable}{l l p{8.5cm}}
+\renewcommand{\arraystretch}{1.5}
+\begin{longtable}{l l p{9cm}}
 \caption{Functional Requirements} \label{tab:func-req} \\
 \toprule
 \textbf{ID} & \textbf{Category} & \textbf{Requirement Description} \\
 \midrule
 \endfirsthead
-\multicolumn{3}{c}%
-{{\bfseries Table \thetable\ continued from previous page}} \\
+\multicolumn{3}{c}{{\bfseries Table \thetable\ continued from previous page}} \\
 \toprule
 \textbf{ID} & \textbf{Category} & \textbf{Requirement Description} \\
 \midrule
@@ -34,7 +34,7 @@ Functional requirements describe the specific behaviors, features, and functions
 \bottomrule
 \endlastfoot
 
-% User Management
+% FR1: User & Profile Management
 \multicolumn{3}{l}{\textbf{FR1: User \& Profile Management}} \\
 \midrule
 FR1.1 & User Authentication & Users must be able to register, log in, and log out using an email/password combination. The system must use JWT for session management. \\
@@ -42,10 +42,10 @@ FR1.2 & Profile System & Each user must have a profile page displaying their inf
 FR1.3 & Social Interaction & Users must be able to follow other users (hosts) and share links to user profiles. \\
 \midrule
 
-% Room Management
+% FR2: Room Creation & Management (Host)
 \multicolumn{3}{l}{\textbf{FR2: Room Creation \& Management (Host)}} \\
 \midrule
-FR2.1 & Room Type Selection & Hosts must be able to create two distinct types of rooms: a gamified \textbf{"Quiz Room"} or a secure \textbf{"Test Room"}. \\
+FR2.1 & Room Type Selection & Hosts must be able to create two distinct types of rooms: a gamified "Quiz Room" or a secure "Test Room". \\
 FR2.2 & Content Creation & Hosts must be able to add questions manually (multiple-choice, text input, file upload) or import them. \\
 FR2.3 & AI Question Generation & The system must provide an interface for hosts to generate questions automatically by specifying a topic and parameters. \\
 FR2.4 & DOCX Import & The system must allow hosts to upload a `.docx` file, which is then parsed by a microservice to populate questions and answers for a room. \\
@@ -53,7 +53,7 @@ FR2.5 & Room Configuration & Hosts must be able to set room titles, descriptions
 FR2.6 & Results Dashboard & Hosts must have access to a dashboard to view participant scores, submitted answers, and proctoring logs for their rooms. \\
 \midrule
 
-% Participant Interaction
+% FR3: Participant Interaction
 \multicolumn{3}{l}{\textbf{FR3: Participant Interaction}} \\
 \midrule
 FR3.1 & Room Participation & Users must be able to join a room using a unique code or by clicking a direct link. \\
@@ -61,7 +61,7 @@ FR3.2 & Answering Questions & Participants must be able to view questions and su
 FR3.3 & Real-time Updates & In Quiz Rooms, the leaderboard and scores must update in near real-time. \\
 \midrule
 
-% Gamification
+% FR4: Gamification & Rewards
 \multicolumn{3}{l}{\textbf{FR4: Gamification \& Rewards}} \\
 \midrule
 FR4.1 & Leaderboard & Quiz Rooms must feature a live leaderboard displaying participant scores and rankings. \\
@@ -70,7 +70,7 @@ FR4.3 & Reward Issuance & The system must automatically issue a unique QR code f
 FR4.4 & QR Code Verification & The system must provide a mechanism for hosts to scan a participant's QR code to validate and redeem the reward, marking it as used. \\
 \midrule
 
-% Proctoring
+% FR5: Anti-Cheating / Proctoring (Test Room)
 \multicolumn{3}{l}{\textbf{FR5: Anti-Cheating / Proctoring (Test Room)}} \\
 \midrule
 FR5.1 & Tab-Switching Detection & The system must detect when a participant navigates away from the test tab/window and log this event. \\
@@ -78,60 +78,80 @@ FR5.2 & Inactivity Monitoring & The system must monitor for prolonged periods of
 FR5.3 & Proctoring Logs & All detected suspicious events must be logged with timestamps and made available to the host. \\
 \midrule
 
-% Discovery
+% FR6: Discovery & Community
 \multicolumn{3}{l}{\textbf{FR6: Discovery \& Community}} \\
 \midrule
 FR6.1 & Room Discovery & The system must provide a discovery page with search functionality and a "Nearby" feature that uses the device's GPS to find local rooms. \\
 FR6.2 & Popularity Ranking & The discovery page should feature and suggest rooms based on popularity metrics (e.g., number of participants, host followers). \\
 \midrule
 
-% Admin Panel
+% FR7: Administrator Panel
 \multicolumn{3}{l}{\textbf{FR7: Administrator Panel}} \\
 \midrule
 FR7.1 & System Dashboard & An admin panel must exist to display system-wide statistics (e.g., total users, active rooms). \\
 FR7.2 & Management & Administrators must be able to manage users and rooms (e.g., delete inappropriate content, resolve user reports). \\
+
 \end{longtable}
+
 
 \section{Non-Functional Requirements}
 \label{sec:non-func-req}
 Non-functional requirements define the quality attributes, performance standards, and constraints of the system, detailed in Table \ref{tab:non-func-req}.
 
-\begin{table}[htbp]
-\centering
-\caption{Non-Functional Requirements}
-\label{tab:non-func-req}
-\begin{tabular}{l l p{8.5cm}}
+\renewcommand{\arraystretch}{1.5}
+\begin{longtable}{l l p{9cm}}
+\caption{Non-Functional Requirements} \label{tab:non-func-req} \\
 \toprule
 \textbf{ID} & \textbf{Category} & \textbf{Requirement Description} \\
 \midrule
+\endfirsthead
+\multicolumn{3}{c}{{\bfseries Table \thetable\ continued from previous page}} \\
+\toprule
+\textbf{ID} & \textbf{Category} & \textbf{Requirement Description} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+
+% NFR1: Performance
 \multicolumn{3}{l}{\textbf{NFR1: Performance}} \\
 \midrule
 NFR1.1 & API Response Time & 95\% of API requests under normal load should complete in under 500ms. AI generation requests are exempt but should not exceed 20 seconds. \\
 NFR1.2 & Concurrency & The system must support at least 100 concurrent users in a single real-time quiz room without significant performance degradation. \\
 \midrule
+
+% NFR2: Scalability
 \multicolumn{3}{l}{\textbf{NFR2: Scalability}} \\
 \midrule
 NFR2.1 & Horizontal Scaling & The backend architecture must be stateless and allow for horizontal scaling by adding more server instances behind a load balancer. \\
 NFR2.2 & Microservice Independence & The Python microservice must be independently scalable from the main Node.js backend. \\
 \midrule
+
+% NFR3: Usability
 \multicolumn{3}{l}{\textbf{NFR3: Usability}} \\
 \midrule
 NFR3.1 & User Interface & The UI must be intuitive, responsive across devices (desktop, tablet, mobile), and adhere to modern design principles. \\
 NFR3.2 & Accessibility & The platform should follow Web Content Accessibility Guidelines (WCAG) 2.1 Level A standards. \\
 \midrule
+
+% NFR4: Security
 \multicolumn{3}{l}{\textbf{NFR4: Security}} \\
 \midrule
 NFR4.1 & Data Transmission & All communication between the client and server must be encrypted using HTTPS/TLS. \\
 NFR4.2 & Authentication & User authentication must be secured using JSON Web Tokens (JWT). Passwords must be securely hashed (e.g., using bcrypt) before storage. \\
 NFR4.3 & Input Validation & The system must validate and sanitize all user inputs on both the client and server sides to prevent XSS, SQL Injection, and other vulnerabilities. \\
 \midrule
+
+% NFR5: Reliability & Maintainability
 \multicolumn{3}{l}{\textbf{NFR5: Reliability \& Maintainability}} \\
 \midrule
 NFR5.1 & Uptime & The system should maintain a service uptime of at least 99.5\%. \\
 NFR5.2 & Modularity & The codebase must be well-documented and organized into logical, loosely coupled modules to facilitate maintenance and future development. \\
-\bottomrule
-\end{tabular}
-\end{table}
+
+\end{longtable}
+
 
 \FloatBarrier
 \section{Use Case Analysis}
@@ -149,11 +169,12 @@ Figure \ref{fig:use-case-diagram} illustrates the primary interactions between t
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth]{figures/use-case-diagram.png}
+\includegraphics[width=0.45\textwidth]{figures/use-case-diagram.png}
 \caption{Use Case Diagram for the TEKUTOKO System}
 \label{fig:use-case-diagram}
 \end{figure}
 
+\FloatBarrier
 \subsection{Detailed Use Case Specifications}
 
 \subsubsection{Use Case 1: Create a Proctored Test from a DOCX file}
