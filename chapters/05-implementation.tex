@@ -67,7 +67,41 @@ Docker is used to containerize the backend services for consistent, portable dep
 
 \section{Frontend Implementation (React.js)}
 \label{sec:impl-frontend}
-The frontend is a Single-Page Application (SPA) structured to promote modularity and reusability. The codebase is organized by features (e.g., `components/room`, `components/test`, `pages/Discovery`).
+
+The frontend is implemented as a Single-Page Application (SPA) with a focus on modularity and reusability. The codebase is organized by features (e.g., \texttt{components/room}, \texttt{components/test}, \texttt{pages/Discovery}).  
+
+Figure~\ref{fig:three_images} presents the main user interfaces of TEKUTOKO. Subfigure~\ref{fig:first_image} displays the discovery page where users can find popular and nearby quiz rooms. Subfigure~\ref{fig:second_image} illustrates the interface for creating a new quiz room, while Subfigure~\ref{fig:third_image} shows the interface for taking a quiz/test.
+
+\begin{figure}[h!]
+    \centering
+    % --- First image ---
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/ui-dashboard.png}
+        \caption{Dashboard: popular, nearby quiz rooms.}
+        \label{fig:first_image}
+    \end{subfigure}
+    \hfill
+    % --- Second image ---
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/ui-room-generator.png}
+        \caption{Interface for creating a new quiz room.}
+        \label{fig:second_image}
+    \end{subfigure}
+    \hfill
+    % --- Third image ---
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/ui-quizz-room.png}
+        \caption{Interface for taking a quiz/test.}
+        \label{fig:third_image}
+    \end{subfigure}
+
+    \caption{Main interfaces of TEKUTOKO: Dashboard, Create Quiz Room, and Quiz Room.}
+    \label{fig:three_images}
+\end{figure}
+\FloatBarrier
 
 \subsection{Anti-Cheating Logic in \texttt{TestRoom} Component}
 A key implementation is the proctoring system within the `TestRoom` component. It uses React's `useEffect` hook to attach and clean up browser event listeners, ensuring monitoring only occurs during an active test session. The code is shown in Listing \ref{lst:proctoring-jsx}.
