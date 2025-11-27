@@ -26,8 +26,10 @@
 \usepackage[strings]{underscore}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{tikz} % Thêm gói này để vẽ khung bìa
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usetikzlibrary{calc} % Thư viện hỗ trợ tính toán tọa độ cho khung
 
 \lstdefinelanguage{JSON}{
 	basicstyle=\ttfamily\small,
@@ -134,9 +136,94 @@
 
 % =================== DOCUMENT START ===================
 \begin{document}
-	
-	\maketitle
-	\pagenumbering{roman}
+    
+    \begin{titlepage}
+        % Vẽ khung viền
+        \begin{tikzpicture}[remember picture, overlay]
+            \draw[line width=2pt] ($(current page.north west) + (2.5cm,-2cm)$) rectangle ($(current page.south east) + (-2cm,2cm)$);
+        \end{tikzpicture}
+        
+        \centering
+        \vspace*{1cm}
+        
+        % Header
+        {\fontsize{13pt}{16pt}\selectfont
+            VIETNAM NATIONAL UNIVERSITY, HANOI\\
+            VIETNAM JAPAN UNIVERSITY\\
+            \textbf{FACULTY OF ADVANCED TECHNOLOGIES AND ENGINEERING}\par}
+        
+        \vspace{4cm}
+        
+        % Tên sinh viên (Times New Roman, 14pt, bold)
+        {\fontsize{14pt}{17pt}\selectfont \textbf{NGUYEN THE NAM}\par}
+        
+        \vspace{3.5cm}
+        
+        % Tên đề tài (Times New Roman, 18pt, bold)
+        {\fontsize{18pt}{22pt}\selectfont \textbf{TEKUTOKO: A MICROSERVICE-BASED GAMIFIED E-LEARNING PLATFORM WITH AI-DRIVEN CONTENT GENERATION AND INTEGRATED PROCTORING}\par}
+        
+        \vfill
+        
+        % Bằng cấp
+        {\fontsize{14pt}{17pt}\selectfont
+            Bachelor in Computer Science and Engineering\\
+            (Honors Program)\par}
+        
+        \vspace{2cm}
+        
+        % Footer
+        {\fontsize{14pt}{17pt}\selectfont \textbf{Hanoi – 2025}\par}
+        
+        \vspace*{1.5cm}
+    \end{titlepage}
+
+    % =================== SECOND COVER PAGE (WITH SUPERVISOR) ===================
+    \begin{titlepage}
+        % Vẽ khung viền
+        \begin{tikzpicture}[remember picture, overlay]
+            \draw[line width=2pt] ($(current page.north west) + (2.5cm,-2cm)$) rectangle ($(current page.south east) + (-2cm,2cm)$);
+        \end{tikzpicture}
+        
+        \centering
+        \vspace*{1cm}
+        
+        % Header
+        {\fontsize{13pt}{16pt}\selectfont
+            VIETNAM NATIONAL UNIVERSITY, HANOI\\
+            VIETNAM JAPAN UNIVERSITY\\
+            \textbf{FACULTY OF ADVANCED TECHNOLOGIES AND ENGINEERING}\par}
+        
+        \vspace{3.5cm}
+        
+        % Tên sinh viên
+        {\fontsize{14pt}{17pt}\selectfont \textbf{NGUYEN THE NAM}\par}
+        
+        \vspace{3cm}
+        
+        % Tên đề tài
+        {\fontsize{18pt}{22pt}\selectfont \textbf{TEKUTOKO: A MICROSERVICE-BASED GAMIFIED E-LEARNING PLATFORM WITH AI-DRIVEN CONTENT GENERATION AND INTEGRATED PROCTORING}\par}
+        
+        \vspace{2cm}
+        
+        % Bằng cấp
+        {\fontsize{14pt}{17pt}\selectfont
+            Bachelor in Computer Science and Engineering\\
+            (Honors Program)\par}
+            
+        \vfill
+        
+        % Supervisor Info
+        {\fontsize{14pt}{17pt}\selectfont \textbf{Supervisor: Dr. Nguyen Van Tinh}\par}
+        
+        \vspace{2cm}
+        
+        % Footer
+        {\fontsize{14pt}{17pt}\selectfont \textbf{Hanoi – 2025}\par}
+        
+        \vspace*{1.5cm}
+    \end{titlepage}
+
+    \pagenumbering{roman}
 	
 	% ======= FRONT MATTER =======
 	\include{chapters/00-preface}       % (Lời cảm ơn hoặc abstract)
