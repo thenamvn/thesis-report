@@ -271,7 +271,6 @@ CREATE TABLE `vouchers` (
 \subsection{API Design and Specification}
 
 The system exposes a RESTful API for communication between the frontend and backend. Endpoints are logically structured around resources, as shown in Table \ref{tab:api-endpoints}.
-
 \begin{table}[htbp]
 \centering
 \caption{Key API Endpoint Specifications}
@@ -295,6 +294,349 @@ The system exposes a RESTful API for communication between the frontend and back
 \end{tabular}%
 }
 \end{table}
+\FloatBarrier
+\subsection{Anti-Cheat System Design}
+\label{subsec:anti-cheat-design}
+
+Academic integrity in online testing presents unique challenges compared to traditional proctored exams. The TEKUTOKO platform implements a comprehensive, multi-layered anti-cheat system designed specifically for Test Rooms. This system balances the need for academic integrity with user privacy, system performance, and user experience constraints. The design philosophy follows a "deterrent-based" approach rather than attempting foolproof prevention, recognizing that lightweight browser-based monitoring cannot prevent all forms of cheating but can significantly reduce opportunistic violations.
+
+\subsubsection{System Architecture Overview}
+
+The anti-cheat system is architected as an integrated component of the Test Room frontend, with backend support for logging and analysis. The architecture consists of four primary layers:
+
+\begin{enumerate}
+    \item \textbf{Detection Layer:} Browser-based event listeners that monitor user behavior in real-time
+    \item \textbf{Storage Layer:} Secure, encrypted client-side storage for violation counters and activity logs
+    \item \textbf{Warning Layer:} User interface components that provide immediate feedback when violations are detected
+    \item \textbf{Enforcement Layer:} Automated submission and blocking mechanisms triggered by violation thresholds
+\end{enumerate}
+
+The system operates primarily on the client side to minimize server load and enable real-time responsiveness, while critical data is synchronized to the server for permanent record-keeping and host review.
+
+\subsubsection{Secure Data Storage Mechanism}
+
+To prevent tampering with violation counters and activity logs stored in the browser, the system implements a custom \texttt{SecureStorage} class with multiple security layers:
+
+\paragraph{Multi-Layer Encryption:}
+Data stored in browser localStorage undergoes three stages of protection:
+
+\begin{enumerate}
+    \item \textbf{AES Encryption:} All data is encrypted using the AES-256 algorithm from the CryptoJS library with a device-specific secret key.
+    
+    \item \textbf{Obfuscation:} Encrypted data is further obfuscated using a Caesar cipher with variable shift values and Base64 encoding, making it unreadable in browser developer tools.
+    
+    \item \textbf{Integrity Verification:} Each data packet includes both a SHA-256 checksum and an HMAC-SHA256 signature to detect any tampering attempts.
+\end{enumerate}
+
+\paragraph{Device Fingerprinting:}
+The encryption key is derived from a combination of browser and device characteristics, creating a unique fingerprint for each client:
+
+\begin{lstlisting}[language=JavaScript, caption={Device Fingerprinting for Encryption Key Generation}]
+generateSecretKey() {
+  const canvas = this.getCanvasFingerprint();
+  const screenInfo = `${window.screen.width}x${window.screen.height}`;
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const language = navigator.language;
+  const userAgent = navigator.userAgent.slice(0, 50);
+  
+  return CryptoJS.SHA256(
+    `${canvas}-${screenInfo}-${timezone}-${language}-${userAgent}`
+  ).toString();
+}
+\end{lstlisting}
+
+The canvas fingerprinting technique exploits subtle differences in how browsers render graphics, creating a unique identifier that is extremely difficult to replicate. This prevents students from copying encrypted data between devices to circumvent violation tracking.
+
+\paragraph{Data Packet Structure:}
+Each stored item includes comprehensive metadata for validation:
+
+\begin{lstlisting}[language=JavaScript, caption={Structure of Encrypted Data Packet}]
+{
+  data: { /* actual violation data */ },
+  testId: "quiz_uuid_123",
+  timestamp: 1701234567890,
+  sessionId: "session_xyz_789",
+  checksum: "sha256_hash_of_data",
+  integrity: "hmac_signature"
+}
+\end{lstlisting}
+
+On each retrieval, the system validates both the checksum and integrity signature. If either validation fails, the system flags a potential security violation and may terminate the test session to prevent cheating attempts through data manipulation.
+
+\subsubsection{Behavior Detection Mechanisms}
+
+The system monitors six categories of suspicious behavior using native browser APIs:
+
+\paragraph{1. Tab Switching and Focus Loss Detection:}
+Tab switching is one of the most common forms of digital cheating, allowing students to consult external resources. The system employs three complementary detection methods:
+
+\begin{lstlisting}[language=JavaScript, caption={Multi-Method Tab Switch Detection}]
+// Method 1: Visibility Change API
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && !isTestSubmitted) {
+    logSuspiciousActivity('tabSwitches');
+  }
+});
+
+// Method 2: Window Focus Events
+window.addEventListener('blur', () => {
+  if (!isTestSubmitted) {
+    logSuspiciousActivity('tabSwitches');
+  }
+});
+
+// Method 3: Page Unload Prevention
+window.addEventListener('beforeunload', (e) => {
+  if (!isTestSubmitted) {
+    e.preventDefault();
+    e.returnValue = '';
+    logSuspiciousActivity('tabSwitches', 'Reload attempt');
+  }
+});
+\end{lstlisting}
+
+This multi-method approach ensures detection across different browsers and user actions (Alt+Tab, clicking outside the window, page refresh attempts).
+
+\paragraph{2. Developer Tools Detection:}
+Students may attempt to inspect or manipulate the DOM to view answers or modify quiz state. The system detects DevTools by monitoring changes in window dimensions:
+
+\begin{lstlisting}[language=JavaScript, caption={DevTools Detection via Window Size Analysis}]
+const detectDevTools = () => {
+  const threshold = 160; // pixels
+  const widthDiff = window.outerWidth - window.innerWidth;
+  const heightDiff = window.outerHeight - window.innerHeight;
+  
+  if (widthDiff > threshold || heightDiff > threshold) {
+    logSuspiciousActivity('devToolsAttempts');
+  }
+};
+
+setInterval(detectDevTools, 1000); // Check every second
+\end{lstlisting}
+
+When DevTools is opened, it occupies space within the browser window, causing a measurable difference between the outer (browser) and inner (viewport) dimensions.
+
+\paragraph{3. Copy/Paste Prevention:}
+The system blocks content copying to prevent students from pasting questions into search engines:
+
+\begin{lstlisting}[language=JavaScript, caption={Clipboard Event Blocking}]
+['copy', 'cut', 'paste'].forEach(event => {
+  document.addEventListener(event, (e) => {
+    e.preventDefault();
+    logSuspiciousActivity('copyAttempts');
+    return false;
+  });
+});
+
+// Prevent text selection
+document.addEventListener('selectstart', (e) => {
+  e.preventDefault();
+  return false;
+});
+\end{lstlisting}
+
+\paragraph{4. Context Menu and Keyboard Shortcut Blocking:}
+Right-click menus and keyboard shortcuts provide access to browser features that could enable cheating:
+
+\begin{lstlisting}[language=JavaScript, caption={Comprehensive Shortcut Blocking}]
+// Block right-click menu
+document.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  logSuspiciousActivity('contextMenuAttempts');
+});
+
+// Block dangerous keyboard shortcuts
+const handleKeyDown = (e) => {
+  const blocked = (
+    e.key === 'F12' || // DevTools
+    (e.ctrlKey && e.shiftKey && 'IJC'.includes(e.key)) || // DevTools
+    (e.ctrlKey && 'usacvx'.includes(e.key.toLowerCase())) // Save, Select, Copy, Paste
+  );
+  
+  if (blocked) {
+    e.preventDefault();
+    logSuspiciousActivity('keyboardShortcuts', `Key: ${e.key}`);
+  }
+};
+\end{lstlisting}
+
+\paragraph{5. Screenshot Detection:}
+While browser-based screenshot detection has limitations, the system logs PrintScreen key presses:
+
+\begin{lstlisting}[language=JavaScript, caption={Screenshot Attempt Detection}]
+document.addEventListener('keyup', (e) => {
+  if (e.key === 'PrintScreen') {
+    logSuspiciousActivity('screenshotAttempts');
+  }
+});
+\end{lstlisting}
+
+This does not prevent screenshots taken via operating system tools or external devices, but serves as a deterrent and provides evidence for review.
+
+\paragraph{6. Fullscreen Enforcement:}
+The system automatically enters fullscreen mode and monitors for exits:
+
+\begin{lstlisting}[language=JavaScript, caption={Fullscreen Monitoring}]
+// Enter fullscreen on test start
+const enterFullscreen = async () => {
+  await document.documentElement.requestFullscreen();
+};
+
+// Detect fullscreen exit
+document.addEventListener('fullscreenchange', () => {
+  const isFullscreen = !!document.fullscreenElement;
+  if (!isFullscreen && testActive) {
+    logSuspiciousActivity('tabSwitches', 'Exited fullscreen');
+  }
+});
+\end{lstlisting}
+
+Fullscreen mode reduces the ability to view other applications or reference materials simultaneously.
+
+\subsubsection{Activity Logging and Violation Tracking}
+
+Every detected suspicious event is logged with comprehensive metadata:
+
+\begin{lstlisting}[language=JavaScript, caption={Structured Activity Logging}]
+const logSuspiciousActivity = (type, details = '') => {
+  const logEntry = {
+    type: type,              // e.g., 'tabSwitches', 'devToolsAttempts'
+    details: details,        // Additional context
+    timestamp: new Date().toISOString(),
+    questionIndex: currentQuestionIndex,
+    sessionId: secureStorage.getSessionId()
+  };
+  
+  // Add to in-memory log
+  activityLog.push(logEntry);
+  
+  // Persist to encrypted storage
+  secureStorage.setSecureItem(
+    `activity_log_${testId}`, 
+    activityLog, 
+    testId
+  );
+  
+  // Update violation counter
+  suspiciousActivity[type]++;
+  
+  // Check threshold and potentially auto-submit
+  checkViolationThreshold();
+};
+\end{lstlisting}
+
+This granular logging enables post-hoc analysis by educators, providing context about when and where violations occurred during the test session.
+
+\subsubsection{Progressive Warning and Enforcement}
+
+The system uses a graduated response approach to violations:
+
+\paragraph{Warning System:}
+When a violation is detected, the system displays a prominent warning modal that briefly overlays the test content:
+
+\begin{lstlisting}[language=JavaScript, caption={Warning Display Logic}]
+const showWarning = (violationType) => {
+  const messages = {
+    tabSwitches: 'Tab switching detected. Stay on this page!',
+    devToolsAttempts: 'Developer tools detected. Close them immediately!',
+    copyAttempts: 'Copying is disabled during tests.',
+    // ... other types
+  };
+  
+  setWarningMessage(messages[violationType]);
+  setShowWarning(true);
+  
+  // Auto-hide after 3 seconds
+  setTimeout(() => setShowWarning(false), 3000);
+};
+\end{lstlisting}
+
+The warning serves both as a deterrent (reminding students they are being monitored) and as a second chance (the test continues unless threshold is exceeded).
+
+\paragraph{Automatic Submission and Blocking:}
+When total violations reach a configurable threshold (default: 5), the test is automatically submitted and the student is blocked from continuing:
+
+\begin{lstlisting}[language=JavaScript, caption={Violation Threshold Enforcement}]
+const checkViolationThreshold = () => {
+  const totalViolations = Object.values(suspiciousActivity)
+    .reduce((sum, count) => sum + count, 0);
+  
+  if (totalViolations >= 5) {
+    setBlockedForCheating(true);
+    handleAutoSubmit('Excessive cheating behavior detected');
+  }
+};
+
+const handleAutoSubmit = async (reason) => {
+  const payload = {
+    quiz_uuid: testId,
+    student_username: username,
+    answers: currentAnswers,
+    cheating_detected: true,
+    cheating_reason: reason,
+    activity_log: activityLog,
+    suspicious_activity: suspiciousActivity
+  };
+  
+  await fetch('/api/v1/quiz/check-answers', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+  
+  // Clear storage and show blocked screen
+  clearSecureStorage();
+  setIsTestTerminated(true);
+};
+\end{lstlisting}
+
+This automatic enforcement ensures that students cannot continue testing after repeated violations, while preserving evidence of their answers and behavior for educator review.
+
+\subsubsection{Limitations and Design Trade-offs}
+
+The anti-cheat system was designed with explicit acknowledgment of its limitations:
+
+\begin{itemize}
+    \item \textbf{Cannot detect off-screen activities:} The system cannot prevent students from using secondary devices (phones), consulting physical notes, or receiving assistance from others in the same room. These limitations are inherent to browser-based monitoring.
+    
+    \item \textbf{Potential false positives:} Legitimate technical issues (network problems, browser crashes, accidental key presses) may trigger violation logs. The system addresses this through graduated warnings rather than immediate penalties.
+    
+    \item \textbf{Privacy-preserving design:} Unlike camera-based proctoring, the system does not access webcams, microphones, or record keystrokes beyond specific blocked shortcuts. This protects student privacy but limits detection capabilities.
+    
+    \item \textbf{Deterministic detection only:} The system does not employ AI-based behavior analysis (e.g., detecting unusually fast answer patterns, identifying "too perfect" scores). Such analysis was considered but excluded due to complexity and false positive concerns.
+\end{itemize}
+
+These trade-offs reflect a deliberate design philosophy: the system is intended as a strong deterrent for opportunistic cheating in low- to medium-stakes assessments, not as a comprehensive solution for high-stakes exams requiring stronger guarantees.
+
+\subsubsection{Integration with Results Reporting}
+
+When a test is submitted (normally or automatically), all anti-cheat data is included in the results payload sent to the backend:
+
+\begin{lstlisting}[language=JavaScript, caption={Anti-Cheat Data in Submission Payload}]
+{
+  quiz_uuid: "test_123",
+  student_username: "student@example.com",
+  answers: [ /* student answers */ ],
+  
+  // Anti-cheat metadata
+  activity_log: [
+    { type: 'tabSwitches', timestamp: '...', questionIndex: 3 },
+    { type: 'devToolsAttempts', timestamp: '...', questionIndex: 7 }
+  ],
+  suspicious_activity: {
+    tabSwitches: 2,
+    devToolsAttempts: 1,
+    copyAttempts: 0,
+    // ...
+  },
+  cheating_detected: true,
+  cheating_reason: "Exceeded violation threshold",
+  security_violation_detected: false
+}
+\end{lstlisting}
+
+This data is stored in the \texttt{proctoring\_logs} database table and made available to the host via the Results Dashboard, enabling informed decisions about test validity and potential academic integrity proceedings.
+
+The anti-cheat system represents a pragmatic, privacy-conscious approach to maintaining academic integrity in online assessments. While not foolproof, its multi-layered design provides strong deterrence against common digital cheating methods while maintaining system performance and respecting student privacy. The comprehensive logging and graduated enforcement mechanisms give educators the tools to make informed judgments about test integrity.
 
 \subsection{Security and Scalability Design}
 
