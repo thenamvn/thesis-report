@@ -1,0 +1,72 @@
+\chapter{INTRODUCTION}
+\label{chap:introduction}
+
+\section{Background of Additive Manufacturing}
+\label{sec:intro_background}
+The landscape of global education is undergoing a seismic transformation, a process significantly accelerated by recent worldwide events and the relentless pace of technological innovation. The traditional paradigm of classroom-based instruction is increasingly being augmented, and in many cases replaced, by digital learning environments. This has propelled e-learning from a niche alternative to a mainstream pillar of educational delivery across academic, corporate, and vocational sectors. However, the rapid migration to online platforms has also cast a harsh light on the limitations of first-generation systems. Many of these platforms were designed as little more than digital repositories for static content, leading to passive, uninspiring learning experiences that result in high dropout rates and a demonstrable lack of student engagement.
+
+In response to these deficiencies, two powerful technological and pedagogical trends have emerged as catalysts for the next generation of e-learning: \textbf{gamification} and \textbf{artificial intelligence (AI)}. Gamification, the strategic application of game-design elements and principles in non-game contexts, has been empirically shown to enhance learner motivation, knowledge retention, and overall engagement by tapping into intrinsic human desires for achievement, competition, and social connection \citep{sailer2020}. By embedding elements such as points, leaderboards, mission-based objectives, and tangible rewards, educators can transform learning from a passive chore into an active, enjoyable pursuit.
+
+Concurrently, breakthroughs in artificial intelligence, particularly in the domain of generative models and natural language processing (NLP), are unlocking unprecedented opportunities to automate, personalize, and enrich educational content. AI can now function as a powerful assistant for educators, capable of generating diverse, high-quality assessment questions, adapting content difficulty to individual learner needs, and providing instantaneous feedback. This technological leverage not only alleviates the significant administrative and content-creation burden on educators but also paves the way for a more tailored, efficient, and effective learning journey for students \citep{kasneci2023}.
+
+This thesis is situated at the confluence of these transformative trends. It is motivated by the critical need for a modern e-learning platform that moves beyond mere content delivery to offer a holistic, intelligent, and deeply engaging educational ecosystem. The TEKUTOKO project was conceived to address this need by designing and constructing a platform that synergistically integrates mission-based gamification with powerful AI-driven content generation, all underpinned by a robust, scalable, and modern software architecture.
+
+Furthermore, the challenges of ensuring academic integrity in remote learning environments have become increasingly critical. Traditional face-to-face assessments provide natural oversight, but online environments present new opportunities for academic dishonesty. The development of effective yet non-invasive proctoring solutions represents a significant challenge that this research addresses through innovative browser-based monitoring techniques \citep{dawson2020}.
+
+The convergence of these technological capabilities—gamification for engagement, AI for intelligent content generation, and automated proctoring for academic integrity—presents a unique opportunity to reimagine the e-learning experience. Modern cloud-based architectures, particularly microservice-based designs, provide the scalable infrastructure necessary to support these sophisticated features while maintaining system reliability and performance \citep{newman2021}. This architectural approach enables independent scaling of different system components, facilitates continuous deployment and updates, and improves overall system resilience.
+
+\section{Motivations}
+\label{sec:intro_motivations}
+
+Despite the rapid proliferation of e-learning solutions, their effectiveness is frequently undermined by a set of persistent and interconnected challenges. This research identifies and directly addresses four primary problems that hinder the potential of digital education:
+
+\subsection{Low User Engagement in Conventional E-Learning}
+Many platforms fail to capture and sustain learner interest, leading to passive consumption of information rather than active, cognitive participation. This lack of engagement is a primary contributor to poor learning outcomes and high attrition rates \citep{deci2020}. The absence of interactive, motivating, and socially engaging elements makes online learning feel isolating and tedious. Research has consistently demonstrated that student engagement is a critical predictor of academic success and retention in online learning environments \citep{fredricks2020}.
+
+Traditional e-learning platforms often replicate the passive lecture format of conventional classrooms without leveraging the interactive potential of digital technologies. Students simply watch videos or read materials without meaningful interaction or feedback. This passive approach fails to activate the psychological needs for autonomy, competence, and relatedness that are fundamental to intrinsic motivation according to Self-Determination Theory \citep{deci2020}. The result is decreased motivation, reduced learning outcomes, and increased dropout rates.
+
+Gamification presents a promising solution by incorporating game-design elements that naturally promote engagement. Elements such as points, badges, leaderboards, and narrative-driven missions can transform mundane learning tasks into engaging experiences. However, the key is not simply adding superficial game elements, but thoughtfully integrating them to support pedagogical goals while satisfying learners' psychological needs \citep{sailer2020}.
+
+\subsection{High Content Creation Overhead for Educators}
+The process of creating high-quality, diverse, and stimulating educational content—especially varied quizzes, assessments, and interactive activities—is an exceptionally time-consuming and labor-intensive task for educators. This significant overhead often leads to a reliance on static, repetitive materials that quickly become outdated, fail to challenge learners appropriately, and are easily shared, compromising assessment integrity.
+
+Educators report spending substantial time developing assessment questions, creating distractors for multiple-choice questions, and ensuring content validity and reliability. This workload is compounded by the need to regularly update content to maintain freshness and prevent question banks from being compromised through sharing among students \citep{kurni2023}. The administrative burden of content creation takes time away from other valuable teaching activities such as providing personalized feedback, mentoring students, and developing innovative pedagogical approaches.
+
+Recent advances in large language models and generative AI offer transformative potential for addressing this challenge. AI systems can now generate contextually appropriate, pedagogically sound assessment questions at scale, significantly reducing the time educators spend on content creation \citep{baidoo2023}. However, the successful integration of AI into educational content generation requires careful consideration of quality assurance, bias detection, and the maintenance of human oversight to ensure pedagogical soundness \citep{chiu2024}.
+
+\subsection{Pervasive Academic Dishonesty in Online Assessments}
+The remote and often unsupervised nature of online testing presents profound challenges to upholding academic integrity. It is exceedingly difficult to prevent various forms of cheating, such as unauthorized collaboration, use of external resources (e.g., search engines, notes), or identity misrepresentation. This issue erodes the validity of online assessments and devalues the qualifications obtained through them. While sophisticated proctoring solutions exist, they frequently entail high costs, technical complexity, and significant user privacy concerns \citep{ullah2021}.
+
+The COVID-19 pandemic dramatically accelerated the adoption of online assessments, exposing vulnerabilities in academic integrity systems that were designed for face-to-face environments \citep{hodges2020}. Institutions worldwide struggled to implement effective proctoring solutions that balanced the need for assessment security with student privacy concerns and accessibility requirements.
+
+Traditional online proctoring solutions often employ webcam and microphone monitoring, which raises significant privacy concerns and can create anxiety among students \citep{nigam2021}. Additionally, these systems can be expensive, technically complex to implement, and may discriminate against students with limited access to technology or private testing environments. There is a critical need for more accessible, privacy-respecting approaches to maintaining academic integrity in online assessments \citep{gonzalez2023}.
+
+\subsection{Architectural Rigidity of Monolithic EdTech Systems}
+Many legacy and even contemporary e-learning systems are built using monolithic architectures, where all functional components are tightly coupled into a single, large codebase. While seemingly simpler to develop initially, these systems become exceedingly difficult to scale, update, and maintain as they grow. This architectural rigidity stifles innovation, slows the deployment of new features, and makes the entire system vulnerable to failure if a single component malfunctions.
+
+Monolithic architectures present several critical challenges for modern e-learning platforms. First, they make it difficult to scale specific components independently—if the question generation service experiences high demand, the entire system must be scaled, consuming unnecessary resources. Second, they create dependencies that make updates risky—a change to one module can inadvertently break another. Third, they limit technology choices—all components must use the same programming language and frameworks \citep{newman2021}.
+
+Microservice architectures offer compelling advantages for educational technology platforms. By decomposing the system into loosely coupled, independently deployable services, microservices enable independent scaling, technology diversity, improved fault isolation, and faster development cycles \citep{waseem2021}. However, microservices also introduce complexity in terms of service coordination, data consistency, and operational overhead \citep{taibi2020}. The challenge is to adopt microservice principles pragmatically, gaining their benefits while managing their complexities.
+
+This thesis posits that these four problems are not independent but are deeply intertwined. The TEKUTOKO platform is therefore designed as a holistic solution to address these interconnected challenges simultaneously, providing an integrated approach that leverages modern technologies and architectural patterns to create a more effective, engaging, and secure e-learning environment.
+
+\section{Research Objectives}
+\label{sec:intro_objectives}
+
+The primary objective of this research is to design, implement, and rigorously evaluate the TEKUTOKO platform, a multifaceted e-learning system featuring deep gamification, AI-driven content generation, integrated proctoring, and a scalable microservice architecture.
+
+To achieve this overarching goal, the following specific objectives are defined:
+
+\begin{enumerate}
+    \item \textbf{To design and develop a web platform that integrates deep gamification principles} (e.g., mission-based rooms, competitive leaderboards, digital vouchers, and location-based discovery) to demonstrably enhance user engagement and motivation. This includes implementing reward mechanisms that provide tangible incentives for participation and achievement, creating social features that foster community and competition, and developing location-aware functionality that connects online learning with physical spaces.
+    
+    \item \textbf{To implement and evaluate an AI-powered module} that automatically generates diverse, high-quality quiz questions from educator-provided topics or documents, aiming to significantly reduce the content creation workload. This module must produce questions that are pedagogically sound, factually accurate, appropriately challenging, and feature well-designed distractors for multiple-choice questions. The system should support human review and editing to ensure quality control while maintaining efficiency gains.
+    
+    \item \textbf{To integrate a non-invasive, browser-based anti-cheating system} (proctoring) capable of monitoring and logging suspicious activities like tab-switching and user inactivity to improve the integrity of online assessments. This system should provide educators with actionable insights about potential academic integrity violations while respecting student privacy and avoiding the technical complexity and cost of traditional proctoring solutions.
+    
+    \item \textbf{To architect the entire system using a microservice-based approach} to ensure high levels of scalability, maintainability, and resilience, providing a robust foundation for future expansion. The architecture should enable independent deployment and scaling of different system components, support technology diversity where appropriate, and maintain system availability even when individual services experience issues.
+    
+    \item \textbf{To empirically evaluate the platform's effectiveness} through a mixed-methods approach, measuring its impact on user engagement, educator efficiency, system performance, and the quality of its core features. This evaluation should provide quantitative evidence of the platform's benefits while gathering qualitative feedback to inform future improvements.
+\end{enumerate}
+
+These objectives collectively address the research gaps identified in the literature and provide a comprehensive framework for developing next-generation e-learning platforms that are more engaging, efficient, secure, and scalable than current solutions.

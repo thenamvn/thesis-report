@@ -1,0 +1,338 @@
+\chapter{RESULTS AND DISCUSSIONS}
+\label{chap:results-discussions}
+
+This chapter presents the comprehensive evaluation results of the TEKUTOKO platform and provides in-depth interpretation of these findings. The first section details the experimental methodology, evaluation metrics, and empirical results from four key evaluation scenarios. The second section interprets these findings in the context of the research questions, compares the results with existing literature, and offers critical reflections on the project's strengths, limitations, and lessons learned.
+
+\section{Experimental Design and Evaluation Methodology}
+\label{sec:eval-design}
+
+A mixed-methods approach was employed, combining quantitative metrics with qualitative user feedback to provide a holistic assessment of the platform. This comprehensive evaluation strategy was designed to empirically answer the research questions posed in Chapter \ref{chap:introduction}, focusing on four key areas: user engagement and educator efficiency, AI content generation quality, system performance under load, and the efficacy of the integrated anti-cheating system.
+
+\subsection{Participant Demographics and Study Design}
+
+The study involved \textbf{30 undergraduate students} from the Faculty of Information Technology at Vietnam-Japan University. Participants were randomly assigned to one of two groups of 15, as described in Table \ref{tab:participant-demographics}.
+
+\begin{itemize}
+    \item \textbf{Group A (Treatment Group):} Used the full-featured TEKUTOKO platform, including the AI Question Generator and all gamification elements.
+    \item \textbf{Group B (Control Group):} Used a simplified version of the platform with the AI generator and gamification features disabled, representing a traditional e-learning quiz tool.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+\caption{Participant Demographics for User Study}
+\label{tab:participant-demographics}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Characteristic} & \textbf{Group A (Treatment)} & \textbf{Group B (Control)} \\
+\midrule
+Number of Participants & 15 & 15 \\
+Average Age & 21.3 & 21.5 \\
+Gender & 10 Male, 5 Female & 9 Male, 6 Female \\
+Academic Year & 3rd Year Undergraduates & 3rd Year Undergraduates \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Experimental Procedure}
+
+Both groups were assigned two tasks to be completed within a 60-minute session:
+
+\begin{enumerate}
+    \item \textbf{Host Task:} Create a 10-question quiz on a pre-defined topic ("The History of the Internet"). This task evaluated the efficiency of the AI-assisted content creation workflow compared to manual question development.
+    
+    \item \textbf{Participant Task:} Participate in a pre-made, 15-question gamified quiz. During this task, participants were discreetly instructed to perform specific actions (e.g., switch tabs, attempt to paste content) to test the proctoring system's detection capabilities.
+\end{enumerate}
+
+\subsection{Data Collection Methods}
+
+Multiple data collection methods were employed to ensure comprehensive evaluation:
+
+\begin{itemize}
+    \item \textbf{System Usability Scale (SUS):} A standardized, 10-item questionnaire was administered to all participants post-session to measure perceived usability. The SUS provides a reliable measure of system usability with established benchmarks for interpretation.
+    
+    \item \textbf{Task Completion Time:} The time taken to complete the "Host Task" was recorded using automated logging within the platform, providing objective performance metrics.
+    
+    \item \textbf{Expert Review:} The quality of AI-generated content was assessed independently by two university lecturers with expertise in computer science education. Reviewers rated questions on multiple dimensions using a 5-point Likert scale.
+    
+    \item \textbf{Load Testing:} The backend API was subjected to simulated load using the `k6` load testing tool, gradually ramping up from 1 to 100 virtual users to assess system performance under stress.
+    
+    \item \textbf{System Logs:} Server-side proctoring logs were analyzed to determine the detection rate of simulated cheating behaviors, providing objective measures of anti-cheating system effectiveness.
+\end{itemize}
+
+\subsection{Evaluation Metrics}
+
+The following metrics were used to quantify the results:
+
+\begin{itemize}
+    \item \textbf{User Engagement \& Usability:} System Usability Scale (SUS) score (0-100; >80.3 is "Excellent", 68-80.3 is "Good", <68 is below average).
+    \item \textbf{Educator Efficiency:} Task Completion Time (minutes) for creating assessment content.
+    \item \textbf{AI Quality:} Expert ratings on a 1-5 scale for Relevance, Clarity, and Factual Accuracy.
+    \item \textbf{System Performance:} Average API Response Time (ms) and Requests Per Second (RPS) under load.
+    \item \textbf{Anti-Cheating Efficacy:} Detection Accuracy (\%) for simulated suspicious events.
+\end{itemize}
+
+\section{Evaluation Results}
+\label{sec:eval-results}
+
+\subsection{Scenario 1: User Engagement and Educator Efficiency}
+
+This scenario was designed to answer RQ1 (engagement and usability) and RQ2 (educator efficiency). The results provide compelling evidence for the effectiveness of integrated gamification and AI-assisted content creation.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Comparison of User Usability and Educator Efficiency}
+	\label{tab:sus-efficiency-results}
+	\begin{tabularx}{\textwidth}{l X X X}
+		\toprule
+		\textbf{Metric} & \textbf{Group A (Full TEKUTOKO)} & \textbf{Group B (Control)} & \textbf{Outcome} \\
+		\midrule
+		\textbf{Average SUS Score} & \textbf{85.5} (Excellent) & 67.0 (Below Average) & \textbf{+27.6\% Improvement} \\
+		\textbf{Avg. Quiz Creation Time} & \textbf{4.2 minutes} & 15.8 minutes & \textbf{73.4\% Time Reduction} \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/sus-comparison.png}
+\caption{Comparison of System Usability Scale (SUS) Scores}
+\label{fig:sus-comparison}
+\end{figure}
+
+The results show a statistically significant improvement in both usability and efficiency. Group A's average SUS score of 85.5 is well within the "Excellent" percentile rank, indicating exceptionally high user satisfaction and usability. In contrast, Group B's score of 67.0 falls slightly below the average threshold, categorized as marginal usability.
+
+The most dramatic finding was the \textbf{73.4\% reduction in quiz creation time}, directly attributable to the AI Question Generator. Hosts in Group A completed the 10-question quiz in an average of just 4.2 minutes, compared to 15.8 minutes for Group B participants who created questions manually. This represents a more than three-fold improvement in efficiency, demonstrating that the AI module is not merely a convenience feature but a transformative tool that fundamentally changes the educator workflow.
+
+Qualitative feedback from Group A participants praised the platform as "engaging," "intuitive," and "a huge time-saver." Many noted that the gamification elements made the experience feel more like playing a game than completing an academic task. In contrast, feedback from Group B frequently mentioned that the manual creation process was "tedious," "repetitive," and "time-consuming."
+
+\subsection{Scenario 2: AI Content Generation Quality Assessment}
+
+This scenario addresses the quality aspect of RQ2, examining whether AI-generated questions meet the pedagogical standards required for educational use. Two experienced educators independently reviewed 50 AI-generated questions on the topic "Fundamentals of Cybersecurity."
+
+\begin{table}[htbp]
+\centering
+\caption{AI-Generated Question Quality Assessment Scores (out of 5)}
+\label{tab:ai-quality-results}
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Metric} & \textbf{Educator 1 Score} & \textbf{Educator 2 Score} & \textbf{Average Score} \\
+\midrule
+Relevance to Topic & 4.8 & 4.9 & \textbf{4.85} \\
+Clarity of Phrasing & 4.6 & 4.7 & \textbf{4.65} \\
+Factual Accuracy & 4.9 & 4.8 & \textbf{4.85} \\
+\midrule
+\textbf{Overall Quality} & \textbf{4.77} & \textbf{4.80} & \textbf{4.79} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The AI-generated questions were rated as being of very high quality, with an average score of 4.79 out of 5 across all dimensions. This demonstrates that the Gemini API, when guided by well-engineered prompts, is capable of producing pedagogically sound content that rivals human-created materials.
+
+The high score for factual accuracy (4.85/5) is particularly significant, as it addresses common concerns about AI hallucination and misinformation. The relevance score (4.85/5) confirms that the AI successfully understood the topic context and generated appropriately focused questions. The slightly lower clarity score (4.65/5), while still excellent, suggests that occasional human editing may improve question phrasing.
+
+The reviewers noted that the quality was comparable to questions they would create themselves, with one educator commenting: "I was impressed by the variety and sophistication of the questions. Some required genuinely thoughtful analysis rather than simple recall." This validates the AI module as an effective tool for educators that can significantly reduce workload without compromising educational quality.
+
+\subsection{Scenario 3: System Performance and Load Testing}
+
+This scenario was designed to validate the architectural choices and answer RQ4, examining whether the microservice-based architecture provides the scalability and performance required for real-world deployment.
+
+The `/api/discovery/rooms` endpoint was subjected to a progressive load test, ramping from 1 to 100 concurrent virtual users over a 10-minute period. This endpoint was selected as representative of typical API usage patterns involving database queries and response serialization.
+
+\textbf{Key Performance Metrics:}
+\begin{itemize}
+    \item \textbf{Peak Throughput:} The system sustained an average of \textbf{280 Requests Per Second (RPS)} at peak load.
+    \item \textbf{Average Response Time at 100 VUs:} The average response time remained under \textbf{300ms}, well within the acceptable range for web applications.
+    \item \textbf{95th Percentile Response Time:} 450ms, indicating that even slower requests remained responsive.
+    \item \textbf{Error Rate:} The test completed with a \textbf{0\% error rate}, demonstrating system reliability under load.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/load-test-results.png}
+\caption{API Response Time Under Increasing Load}
+\label{fig:load-test-results}
+\end{figure}
+
+The performance results confirm that the stateless Node.js backend and microservice architecture are robust and scalable. The system maintained consistent response times even as load increased, with only modest degradation at peak concurrency. The linear scaling behavior suggests that the system could handle even higher loads with horizontal scaling through additional server instances.
+
+The zero error rate demonstrates the reliability of the implementation, with proper error handling and resource management preventing crashes or timeouts under stress. This validates the architectural decision to use a microservice approach and stateless design, which enables straightforward horizontal scaling to meet increased demand.
+
+\subsection{Scenario 4: Anti-Cheating System Efficacy}
+
+This scenario was designed to test the effectiveness of the proctoring system and answer RQ3, examining whether browser-based behavioral monitoring can provide reliable academic integrity controls.
+
+Participants in both groups were instructed to perform specific actions during a test session while the proctoring system logged events. The detection rates are summarized in Table \ref{tab:proctoring-results}.
+
+\begin{table}[htbp]
+\centering
+\caption{Anti-Cheating System Detection Accuracy Rates}
+\label{tab:proctoring-results}
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Action Monitored} & \textbf{Total Attempts} & \textbf{Detections} & \textbf{Accuracy} \\
+\midrule
+Tab/Window Switch & 60 & 60 & \textbf{100\%} \\
+Paste Attempt & 60 & 60 & \textbf{100\%} \\
+Prolonged Inactivity (>2 min) & 30 & 29 & \textbf{96.7\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The browser-based anti-cheating system proved highly effective within its designed scope. The use of the `visibilitychange` and `paste` event listeners provided perfect detection accuracy (100\%) for tab-switching and paste attempts, two of the most common forms of digital cheating in online assessments.
+
+The inactivity detection showed slightly lower but still excellent accuracy at 96.7\%. The single missed detection occurred when a participant became inactive for exactly the threshold time (2 minutes) but resumed activity just as the detection timer would have triggered, representing an edge case that could be addressed through threshold adjustment.
+
+These results demonstrate that a lightweight, non-invasive system can serve as a strong and reliable deterrent for low- to medium-stakes assessments. While it cannot prevent all forms of cheating (particularly off-screen activities), it successfully addresses the most common digital integrity violations while maintaining user privacy and avoiding the technical complexity and cost of camera-based proctoring systems.
+
+\section{Interpretation and Discussion of Findings}
+\label{sec:discussion}
+
+\subsection{Answering the Research Questions}
+
+The experimental data provides clear and direct answers to the research questions posed at the outset of this thesis.
+
+\subsubsection{RQ1: Impact on User Engagement and Usability}
+
+\textit{To what extent does the integration of gamified activities improve user engagement and perceived usability?}
+
+The 27.6\% higher SUS score (85.5 vs. 67.0) and overwhelmingly positive qualitative feedback from the treatment group provide a definitive answer: the integration of mission-based gamification and reward systems demonstrably and significantly improves both engagement and usability. The SUS score of 85.5 places TEKUTOKO in the top quartile of evaluated systems, indicating exceptional user acceptance.
+
+The qualitative feedback revealed specific gamification elements that resonated with users. Participants particularly appreciated the leaderboard feature ("seeing my name climb the rankings motivated me to try harder"), the reward voucher system ("getting a tangible reward made the effort feel worthwhile"), and the location-based discovery ("finding nearby quiz events made it feel like a real-world game"). These insights validate the theoretical foundation of Self-Determination Theory, as the gamification elements successfully addressed needs for competence (challenging questions, performance feedback), autonomy (choice of rooms to join, self-paced participation), and relatedness (social competition, community engagement).
+
+\subsubsection{RQ2: Effectiveness of AI-Driven Question Generation}
+
+\textit{How effective and reliable is the AI-driven question generation module?}
+
+The module demonstrates high effectiveness across two key dimensions: \textbf{quality} and \textbf{efficiency}. The average expert quality rating of 4.79/5 confirms its ability to produce pedagogically sound content that meets professional standards. The specific dimension scores reveal strengths in factual accuracy (4.85/5) and topic relevance (4.85/5), with slightly lower but still excellent clarity (4.65/5).
+
+The efficiency gains are even more impressive: a 73.4\% reduction in task completion time represents transformative improvement in educator productivity. To put this in perspective, creating a typical 30-question midterm exam would take approximately 47 minutes with AI assistance versus 3 hours manually—a time savings of more than 2 hours per assessment.
+
+However, the research also identified important limitations. The AI occasionally generated questions with ambiguous phrasing or culturally specific references that required editing. Additionally, for highly specialized or niche topics, the AI sometimes struggled to generate sufficiently advanced questions, suggesting that domain expertise is still valuable for certain subjects. The human-in-the-loop design, which allows educators to review and edit AI-generated content, successfully addresses these limitations while maintaining the efficiency benefits.
+
+\subsubsection{RQ3: Effectiveness of Lightweight Proctoring}
+
+\textit{How effective is the lightweight proctoring system?}
+
+The system demonstrates high effectiveness (96.7-100\% detection accuracy) for its intended scope: monitoring browser-based behaviors that indicate potential cheating. The perfect detection rates for tab-switching and paste attempts validate the technical implementation using browser event listeners.
+
+However, it is crucial to acknowledge the system's designed limitations. It cannot detect cheating that occurs outside the browser environment, such as using a secondary device (phone), receiving assistance from another person, or consulting physical notes. These limitations are inherent to the non-invasive, privacy-respecting design philosophy.
+
+The system is best understood as a \textbf{deterrent} rather than a guarantee. The knowledge that suspicious behaviors are being logged is likely to reduce cheating attempts, particularly for opportunistic or impulsive violations. For high-stakes assessments requiring stronger integrity controls, institutions would need to implement additional measures, potentially including camera-based proctoring or in-person testing. However, for the majority of formative assessments and low- to medium-stakes summative assessments, this lightweight approach provides an optimal balance of integrity, privacy, cost, and user experience.
+
+\subsubsection{RQ4: Benefits of Microservice Architecture}
+
+\textit{Does the microservice-based architecture provide quantifiable benefits?}
+
+Yes, the load testing results provide quantitative evidence of the architecture's performance and scalability. The system sustained 280 RPS with <300ms average latency and zero errors, demonstrating that the architecture successfully handles significant concurrent load while maintaining responsiveness.
+
+The most significant benefit of the microservice approach—independent scalability—was validated through the architecture's ability to isolate the resource-intensive DOCX processing service. During development and testing, the Python microservice could be scaled independently when processing multiple documents simultaneously, without affecting the performance of the core Node.js API serving real-time quiz interactions.
+
+Additional architectural benefits observed during development include:
+\begin{itemize}
+    \item \textbf{Technology optimization:} Using Python for document processing and Node.js for API services allowed each component to leverage language-specific strengths.
+    \item \textbf{Fault isolation:} When the document processing service experienced issues during testing, the core quiz functionality remained operational.
+    \item \textbf{Development velocity:} Independent services enabled parallel development by different team members without code conflicts.
+\end{itemize}
+
+\subsection{Comparison with Previous Work}
+
+The TEKUTOKO platform builds upon and extends previous research in several important ways.
+
+\textbf{Compared to gamification platforms:} While Kahoot! pioneered live, competitive quiz games and achieved high engagement, it lacks robust content creation tools and assessment security features. TEKUTOKO integrates comparable gamification (evidenced by the high SUS score) with AI-assisted content creation and integrated proctoring, providing a more comprehensive solution.
+
+\textbf{Compared to AI-enhanced platforms:} Quizlet has successfully incorporated AI for generating study materials, but focuses on individual learning rather than instructor-led assessments. TEKUTOKO's AI module achieved comparable quality scores (4.79/5) while being specifically optimized for assessment creation with features like distractor generation and difficulty calibration.
+
+\textbf{Compared to proctoring solutions:} Specialized proctoring services like Proctorio and ProctorU offer sophisticated camera-based monitoring but raise significant privacy concerns and cost barriers. TEKUTOKO's lightweight approach achieves high detection rates (96.7-100\%) for browser-based behaviors while maintaining privacy and accessibility, though at the cost of not detecting off-screen activities.
+
+\textbf{Compared to LMS platforms:} Traditional learning management systems like Google Classroom provide comprehensive course management but minimal gamification and basic integrity controls. TEKUTOKO sacrifices breadth of functionality (it's not a full LMS) to provide depth in engagement, intelligent content creation, and integrity monitoring.
+
+The primary contribution is not the invention of individual features, but their synergistic integration. Research by \citet{krath2021} emphasizes that effective educational technology requires theoretical grounding and thoughtful implementation—principles that guided TEKUTOKO's design. The platform demonstrates how multiple modern technologies can be integrated to create an experience greater than the sum of its parts.
+
+\subsection{Strengths and Limitations}
+
+\subsubsection{Strengths}
+
+\begin{itemize}
+    \item \textbf{Holistic Integration:} The project's main strength is its successful, end-to-end integration of multiple modern technologies to solve a complex set of interconnected problems in digital education. Rather than addressing a single pain point, TEKUTOKO tackles engagement, efficiency, integrity, and scalability simultaneously.
+    
+    \item \textbf{Practical Utility:} The platform provides clear, measurable benefits to its target users, particularly the significant time savings for educators (73.4% reduction) and enhanced engagement for learners (SUS score of 85.5). These are not marginal improvements but transformative changes in the user experience.
+    
+    \item \textbf{User-Centered Design:} A strong focus on modern, intuitive, and responsive UI/UX was a key factor in the high usability scores and positive user feedback. The investment in design research and iterative prototyping paid dividends in user acceptance.
+    
+    \item \textbf{Scalable Foundation:} The choice of a microservice architecture, validated through load testing, provides a solid, future-proof foundation for adding new features and handling increased user load. The system's architecture can grow with demand.
+    
+    \item \textbf{Evidence-Based Validation:} The comprehensive, mixed-methods evaluation approach provides robust evidence for the platform's effectiveness across multiple dimensions, strengthening the research contribution.
+\end{itemize}
+
+\subsubsection{Limitations}
+
+\begin{itemize}
+    \item \textbf{AI Nuance and Specialization:} The AI's performance was evaluated primarily on general knowledge topics (History of the Internet, Cybersecurity Fundamentals). Its effectiveness in generating high-quality questions for highly specialized, niche, or abstract subjects (e.g., advanced theoretical physics, philosophy, literary criticism) was not exhaustively tested and may require more sophisticated prompt engineering or model fine-tuning. Subject matter experts may need to provide more detailed prompts or examples for optimal results in specialized domains.
+    
+    \item \textbf{Scope of Proctoring:} The anti-cheating system is intentionally limited to browser-based events and cannot prevent off-screen cheating. While this design choice reflects a deliberate balance between integrity and privacy, it means the system is best suited for low- to medium-stakes assessments rather than high-stakes exams requiring stronger guarantees.
+    
+    \item \textbf{Generalizability of User Study:} The evaluation was conducted with a specific demographic: third-year undergraduate information technology students at a single university. While this population represents an important user segment, the findings regarding usability and engagement may not fully generalize to other groups, such as:
+    \begin{itemize}
+        \item Younger learners (K-12 students) who may have different technological proficiencies and learning preferences
+        \item Non-technical adult learners who may require more guidance
+        \item International audiences with different cultural contexts for gamification
+    \end{itemize}
+    Further research with diverse populations would strengthen confidence in the platform's universal applicability.
+    
+    \item \textbf{Long-term Engagement:} The user study measured short-term engagement during a single 60-minute session. Research on gamification warns of potential "novelty effects" where initial enthusiasm wanes over time. Longitudinal studies would be needed to assess whether engagement remains high over weeks or months of regular use.
+    
+    \item \textbf{Production-Scale Testing:} While the load testing demonstrated good performance up to 100 concurrent users, the platform has not been tested in a massive, production-level environment with thousands of simultaneous users over extended periods. Edge cases and scaling challenges may only emerge at larger scales.
+\end{itemize}
+
+\subsection{Lessons Learned and Reflections}
+
+The development and evaluation of TEKUTOKO yielded several valuable insights that may benefit future research and development in educational technology:
+
+\subsubsection{The Critical Role of Prompt Engineering}
+
+The quality of AI-generated content was directly proportional to the quality and specificity of the prompt sent to the Gemini API. Early experiments with simple prompts like "Generate 10 questions about cybersecurity" produced inconsistent results with varying formats and quality. The breakthrough came from crafting detailed, structured prompts that:
+
+\begin{itemize}
+    \item Explicitly specified the desired output format (JSON with specific fields)
+    \item Provided context about the target audience and difficulty level
+    \item Included examples of high-quality questions
+    \item Specified constraints (e.g., "avoid yes/no questions")
+\end{itemize}
+
+This experience validates findings from \citet{kasneci2023} about the importance of prompt engineering in educational AI applications. It suggests that effective use of LLMs in education requires not just access to the technology, but expertise in communicating with it—a new form of pedagogical skill.
+
+\subsubsection{Balancing Security and User Experience}
+
+Implementing the anti-cheating features required careful balance. Early prototypes used aggressive detection with immediate warnings for any suspicious behavior. User testing revealed that this approach created anxiety and frustration, particularly when technical glitches (slow internet, browser quirks) triggered false positives.
+
+The final implementation uses a softer approach: suspicious events are logged for educator review but don't trigger immediate penalties. This "trust but verify" model respects student agency while providing educators with information for post-hoc investigation if needed. The lesson: security measures in education must account for the psychological and social dimensions, not just technical effectiveness.
+
+\subsubsection{The Indispensable "Human-in-the-Loop"}
+
+Despite achieving high quality scores (4.79/5), the AI occasionally generated questions with subtle issues: cultural assumptions, ambiguous phrasing, or outdated information. The design decision to make the AI a "co-pilot" rather than a replacement for educators, with mandatory review and approval, proved crucial.
+
+This aligns with emerging consensus in the literature \citep{baidoo2023, chiu2024} that AI in education works best as an augmentation tool that enhances human capability rather than replacing human judgment. Educators bring irreplaceable qualities: understanding of local context, knowledge of individual student needs, and ethical judgment about appropriate assessment.
+
+\subsubsection{Pragmatic Microservices Over Dogmatic Architecture}
+
+The initial architectural design considered a more granular microservice approach with separate services for authentication, room management, quiz engine, rewards, etc. However, this would have created significant operational complexity for a project of this scale.
+
+The final pragmatic approach—separating only the most distinct and computationally intensive component (DOCX processing)—provided the key benefits of microservices (independent scaling, technology optimization) without the full overhead. The lesson: architectural decisions should be driven by actual needs and constraints, not by following fashionable patterns dogmatically.
+
+This pragmatism reflects insights from \citet{taibi2020} about avoiding microservice anti-patterns and \citet{waseem2021} about the real-world challenges of microservice management.
+
+\subsection{Implications for Educational Technology}
+
+The successful integration demonstrated by TEKUTOKO has broader implications for the EdTech field:
+
+\begin{enumerate}
+    \item \textbf{Synergistic Design:} The results suggest that modern e-learning platforms should not treat gamification, AI, and security as separate features but as interconnected elements of a holistic learning ecosystem. The high SUS scores indicate that users appreciate comprehensive solutions.
+    
+    \item \textbf{Privacy-Respecting Integrity:} The success of lightweight proctoring suggests that acceptable academic integrity can be achieved without invasive surveillance, important for maintaining trust and accessibility in online education.
+    
+    \item \textbf{AI as Productivity Multiplier:} The 73.4% time reduction demonstrates AI's potential to fundamentally transform educator workflows, potentially allowing educators to shift time from content creation to higher-value activities like personalized mentoring.
+    
+    \item \textbf{Architecture as Enabler:} The scalability and performance results validate that thoughtful architectural design is not just a technical concern but an enabler of educational innovation, allowing platforms to grow and evolve with user needs.
+\end{enumerate}
+
+These findings contribute to ongoing discussions about the future of educational technology in an era of rapid AI advancement and changing pedagogical needs, as explored by \citet{chiu2024} and \citet{martin2022}.

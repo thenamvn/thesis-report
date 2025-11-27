@@ -1,0 +1,428 @@
+\chapter{METHODOLOGIES}
+\label{chap:methodologies}
+
+This chapter details the comprehensive methodologies employed in the design, development, and implementation of the TEKUTOKO platform. It encompasses three major components: requirements engineering and system analysis, architectural design and database modeling, and technical implementation. Each section describes the approaches, tools, and techniques used to transform the research objectives into a functional, scalable, and effective e-learning system.
+
+\section{Requirements Engineering}
+\label{sec:requirements-engineering}
+
+The requirements for the TEKUTOKO platform were gathered and refined through a multi-faceted approach to ensure comprehensive coverage of user needs and technical feasibility.
+
+\subsection{Requirements Gathering Methodology}
+
+\begin{enumerate}
+    \item \textbf{Literature Review Analysis:} The comprehensive analysis of academic papers on e-learning, gamification, and online proctoring (as detailed in Chapter \ref{chap:lit-review}) helped identify established best practices and core pedagogical needs. This provided a theoretical foundation for feature selection and priority determination.
+    
+    \item \textbf{Competitive Analysis:} A thorough examination of existing platforms (Kahoot!, Quizlet, Google Classroom, and specialized proctoring tools) was conducted to determine market standards, identify common features, and pinpoint opportunities for innovation. Feature matrices were developed to systematically compare capabilities across platforms.
+    
+    \item \textbf{Stakeholder Needs Analysis:} Potential end-users, including educators and students, were consulted to understand their primary pain points with current systems. Key desired features included faster content creation, more engaging activities, and a trustworthy but non-invasive method for conducting online tests. Semi-structured interviews were conducted with 10 educators and 15 students to gather qualitative insights.
+    
+    \item \textbf{Prototyping and Feedback:} Low-fidelity mockups and user flow diagrams were created to visualize core concepts and gather early feedback, ensuring the proposed system would be intuitive and user-friendly. Iterative feedback sessions helped refine interface designs and interaction patterns.
+\end{enumerate}
+
+\subsection{Functional Requirements}
+
+Functional requirements describe the specific behaviors, features, and functions the system must perform. They are detailed in Table \ref{tab:func-req}.
+
+\renewcommand{\arraystretch}{1.5}
+\begin{longtable}{l l p{9cm}}
+\caption{Functional Requirements} \label{tab:func-req} \\
+\toprule
+\textbf{ID} & \textbf{Category} & \textbf{Requirement Description} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{{\bfseries Table \thetable\ continued from previous page}} \\
+\toprule
+\textbf{ID} & \textbf{Category} & \textbf{Requirement Description} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+
+% FR1: User & Profile Management
+\multicolumn{3}{l}{\textbf{FR1: User \& Profile Management}} \\
+\midrule
+FR1.1 & User Authentication & Users must be able to register, log in, and log out using an email/password combination. The system must use JWT for session management. \\
+FR1.2 & Profile System & Each user must have a profile page displaying their information, created rooms, and followers/following count. \\
+FR1.3 & Social Interaction & Users must be able to follow other users (hosts) and share links to user profiles. \\
+\midrule
+
+% FR2: Room Creation & Management (Host)
+\multicolumn{3}{l}{\textbf{FR2: Room Creation \& Management (Host)}} \\
+\midrule
+FR2.1 & Room Type Selection & Hosts must be able to create two distinct types of rooms: a gamified "Quiz Room" or a secure "Test Room". \\
+FR2.2 & Content Creation & Hosts must be able to add questions manually (multiple-choice, text input, file upload) or import them. \\
+FR2.3 & AI Question Generation & The system must provide an interface for hosts to generate questions automatically by specifying a topic and parameters. \\
+FR2.4 & DOCX Import & The system must allow hosts to upload a `.docx` file, which is then parsed by a microservice to populate questions and answers for a room. \\
+FR2.5 & Room Configuration & Hosts must be able to set room titles, descriptions, rules, and configure GPS location settings for discovery. \\
+FR2.6 & Results Dashboard & Hosts must have access to a dashboard to view participant scores, submitted answers, and proctoring logs for their rooms. \\
+\midrule
+
+% FR3: Participant Interaction
+\multicolumn{3}{l}{\textbf{FR3: Participant Interaction}} \\
+\midrule
+FR3.1 & Room Participation & Users must be able to join a room using a unique code or by clicking a direct link. \\
+FR3.2 & Answering Questions & Participants must be able to view questions and submit their answers within the defined format for each room type. \\
+FR3.3 & Real-time Updates & In Quiz Rooms, the leaderboard and scores must update in near real-time. \\
+\midrule
+
+% FR4: Gamification & Rewards
+\multicolumn{3}{l}{\textbf{FR4: Gamification \& Rewards}} \\
+\midrule
+FR4.1 & Leaderboard & Quiz Rooms must feature a live leaderboard displaying participant scores and rankings. \\
+FR4.2 & Reward Configuration & Hosts must be able to create digital rewards (vouchers, tickets) for completing a Quiz Room. \\
+FR4.3 & Reward Issuance & The system must automatically issue a unique QR code for the reward to participants who meet the completion criteria. \\
+FR4.4 & QR Code Verification & The system must provide a mechanism for hosts to scan a participant's QR code to validate and redeem the reward, marking it as used. \\
+\midrule
+
+% FR5: Anti-Cheating / Proctoring (Test Room)
+\multicolumn{3}{l}{\textbf{FR5: Anti-Cheating / Proctoring (Test Room)}} \\
+\midrule
+FR5.1 & Tab-Switching Detection & The system must detect when a participant navigates away from the test tab/window and log this event. \\
+FR5.2 & Inactivity Monitoring & The system must monitor for prolonged periods of user inactivity during a test and flag it as a potential issue. \\
+FR5.3 & Proctoring Logs & All detected suspicious events must be logged with timestamps and made available to the host. \\
+\midrule
+
+% FR6: Discovery & Community
+\multicolumn{3}{l}{\textbf{FR6: Discovery \& Community}} \\
+\midrule
+FR6.1 & Room Discovery & The system must provide a discovery page with search functionality and a "Nearby" feature that uses the device's GPS to find local rooms. \\
+FR6.2 & Popularity Ranking & The discovery page should feature and suggest rooms based on popularity metrics (e.g., number of participants, host followers). \\
+\midrule
+
+% FR7: Administrator Panel
+\multicolumn{3}{l}{\textbf{FR7: Administrator Panel}} \\
+\midrule
+FR7.1 & System Dashboard & An admin panel must exist to display system-wide statistics (e.g., total users, active rooms). \\
+FR7.2 & Management & Administrators must be able to manage users and rooms (e.g., delete inappropriate content, resolve user reports). \\
+
+\end{longtable}
+
+\subsection{Non-Functional Requirements}
+
+Non-functional requirements define the quality attributes, performance standards, and constraints of the system, detailed in Table \ref{tab:non-func-req}.
+
+\renewcommand{\arraystretch}{1.5}
+\begin{longtable}{l l p{9cm}}
+\caption{Non-Functional Requirements} \label{tab:non-func-req} \\
+\toprule
+\textbf{ID} & \textbf{Category} & \textbf{Requirement Description} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{c}{{\bfseries Table \thetable\ continued from previous page}} \\
+\toprule
+\textbf{ID} & \textbf{Category} & \textbf{Requirement Description} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+
+% NFR1: Performance
+\multicolumn{3}{l}{\textbf{NFR1: Performance}} \\
+\midrule
+NFR1.1 & API Response Time & 95\% of API requests under normal load should complete in under 500ms. AI generation requests are exempt but should not exceed 20 seconds. \\
+NFR1.2 & Concurrency & The system must support at least 100 concurrent users in a single real-time quiz room without significant performance degradation. \\
+\midrule
+
+% NFR2: Scalability
+\multicolumn{3}{l}{\textbf{NFR2: Scalability}} \\
+\midrule
+NFR2.1 & Horizontal Scaling & The backend architecture must be stateless and allow for horizontal scaling by adding more server instances behind a load balancer. \\
+NFR2.2 & Microservice Independence & The Python microservice must be independently scalable from the main Node.js backend. \\
+\midrule
+
+% NFR3: Usability
+\multicolumn{3}{l}{\textbf{NFR3: Usability}} \\
+\midrule
+NFR3.1 & User Interface & The UI must be intuitive, responsive across devices (desktop, tablet, mobile), and adhere to modern design principles. \\
+NFR3.2 & Accessibility & The platform should follow Web Content Accessibility Guidelines (WCAG) 2.1 Level A standards. \\
+\midrule
+
+% NFR4: Security
+\multicolumn{3}{l}{\textbf{NFR4: Security}} \\
+\midrule
+NFR4.1 & Data Transmission & All communication between the client and server must be encrypted using HTTPS/TLS. \\
+NFR4.2 & Authentication & User authentication must be secured using JSON Web Tokens (JWT). Passwords must be securely hashed (e.g., using bcrypt) before storage. \\
+NFR4.3 & Input Validation & The system must validate and sanitize all user inputs on both the client and server sides to prevent XSS, SQL Injection, and other vulnerabilities. \\
+\midrule
+
+% NFR5: Reliability & Maintainability
+\multicolumn{3}{l}{\textbf{NFR5: Reliability \& Maintainability}} \\
+\midrule
+NFR5.1 & Uptime & The system should maintain a service uptime of at least 99.5\%. \\
+NFR5.2 & Modularity & The codebase must be well-documented and organized into logical, loosely coupled modules to facilitate maintenance and future development. \\
+
+\end{longtable}
+
+\FloatBarrier
+
+\section{System Design and Architecture}
+\label{sec:system-architecture}
+
+This section provides a detailed technical blueprint of the TEKUTOKO platform, outlining the high-level architectural paradigm, describing the individual components and their interactions, and detailing the database schema and API design.
+
+\subsection{High-Level System Architecture}
+
+The TEKUTOKO platform is engineered using a \textbf{microservice-based architecture} to promote modularity, independent scalability, and technological flexibility. The architecture decouples the client-facing presentation layer from the backend business logic and specialized processing services. This separation of concerns is critical for building a resilient and maintainable system.
+
+The main components are the React frontend, a core Node.js backend API, a specialized Python microservice for document processing, a relational database, and integrations with third-party cloud services for file storage and AI capabilities. The overall architecture is depicted in Figure \ref{fig:system-architecture}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/system-architecture.png}
+\caption{High-Level System Architecture of TEKUTOKO}
+\label{fig:system-architecture}
+\end{figure}
+
+\paragraph{Architectural Flow:}
+\begin{enumerate}
+    \item The user interacts with the \textbf{React Single-Page Application (SPA)} in their browser.
+    \item All API requests are sent via HTTPS to a central \textbf{API Gateway}, which acts as a reverse proxy and load balancer.
+    \item Standard requests (user auth, room management, etc.) are routed to the \textbf{Node.js Backend}, the system's core. Requests specifically for DOCX file parsing are routed to the dedicated \textbf{Python Microservice}.
+    \item The Node.js backend handles all business logic, interacting with the \textbf{MySQL Database} for persistent data storage.
+    \item For file uploads, the Node.js backend generates a secure, short-lived "signed URL" from \textbf{Firebase Storage} and sends it to the client.
+    \item The client uses this signed URL to upload the file directly to Firebase Storage, offloading bandwidth from the backend server.
+    \item The backend orchestrates calls to the external \textbf{Google Gemini API} for question generation, handling prompt engineering and response parsing.
+\end{enumerate}
+
+\subsection{Component and Module Design}
+
+\begin{itemize}
+    \item \textbf{Frontend (React.js):} A modern SPA built with React 18 and styled with Tailwind CSS. It is responsible for rendering the entire user interface and managing client-side state using React Hooks and Context API. It communicates with the backend services via REST APIs.
+
+    \item \textbf{Backend (Node.js/Express):} The central nervous system of the platform. Its responsibilities include providing RESTful API endpoints, managing JWT-based authentication, handling business logic for all core features, and orchestrating calls to other services.
+
+    \item \textbf{Python Microservice (FastAPI/Flask):} A specialized service responsible for the complex task of processing `.docx` files. Its sole purpose is to accept a document, extract questions, options, and images, and convert them into a structured JSON format ready for serving. It orchestrates external command-line tools like \textbf{Pandoc} for document structure conversion and \textbf{ImageMagick} for image format transcoding (e.g., WMF/EMF to WebP). The processed output is stored in a static directory, served via HTTP, and its metadata is recorded in the database.
+
+    \item \textbf{MySQL Database:} A relational database for all structured, persistent data. This includes user accounts, room configurations, questions, submissions, reward vouchers, and proctoring logs. The relational model ensures data integrity.
+
+    \item \textbf{Firebase Storage:} A cloud-based object storage service used for all binary files, such as user avatars, room cover images, uploaded `.docx` documents, and files submitted by participants as answers.
+\end{itemize}
+
+\subsection{Database Design}
+
+The relationships between the main entities in the system are illustrated in the ERD in Figure \ref{fig:erd-diagram}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/erd-diagram.png}
+\caption{Database Entity-Relationship Diagram (ERD)}
+\label{fig:erd-diagram}
+\end{figure}
+
+Below are the SQL schemas for some of the key tables in the database.
+
+\begin{lstlisting}[language=SQL, caption={SQL Schema for the `users` and `rooms` tables}]
+-- Users table
+CREATE TABLE `users` (
+  `user_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `username` VARCHAR(50) NOT NULL UNIQUE,
+  `email` VARCHAR(100) NOT NULL UNIQUE,
+  `password_hash` VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Rooms table
+CREATE TABLE `rooms` (
+  `room_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `host_id` INT NOT NULL,
+  `room_code` VARCHAR(8) NOT NULL UNIQUE,
+  `title` VARCHAR(255) NOT NULL,
+  `room_type` ENUM('quiz', 'test') NOT NULL,
+  `gps_lat` DECIMAL(10, 8),
+  `gps_lng` DECIMAL(11, 8),
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`host_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
+);
+\end{lstlisting}
+
+\begin{lstlisting}[language=SQL, caption={SQL Schema for the `proctoring_logs` and `vouchers` tables}]
+-- Proctoring logs table
+CREATE TABLE `proctoring_logs` (
+  `log_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `room_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `event_type` ENUM('tab_switch', 'inactivity', 'paste_attempt') NOT NULL,
+  `details` TEXT,
+  `event_timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`room_id`) REFERENCES `rooms`(`room_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
+);
+
+-- Vouchers table
+CREATE TABLE `vouchers` (
+  `voucher_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `room_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `qr_code_data` VARCHAR(255) NOT NULL UNIQUE,
+  `reward_description` TEXT NOT NULL,
+  `is_redeemed` BOOLEAN NOT NULL DEFAULT FALSE,
+  `issued_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `redeemed_at` TIMESTAMP NULL,
+  FOREIGN KEY (`room_id`) REFERENCES `rooms`(`room_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
+);
+\end{lstlisting}
+
+\subsection{API Design and Specification}
+
+The system exposes a RESTful API for communication between the frontend and backend. Endpoints are logically structured around resources, as shown in Table \ref{tab:api-endpoints}.
+
+\begin{table}[htbp]
+\centering
+\caption{Key API Endpoint Specifications}
+\label{tab:api-endpoints}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l l p{6cm} l}
+\toprule
+\textbf{Method} & \textbf{Endpoint} & \textbf{Description} & \textbf{Auth Required} \\
+\midrule
+`POST` & `/auth/register` & Register a new user. & No \\
+`POST` & `/auth/login` & Authenticate a user and return a JWT. & No \\
+`POST` & `/api/rooms` & Create a new Quiz or Test Room. & Yes \\
+`POST` & `/api/rooms/generate-ai` & Generate questions for a room using AI. & Yes \\
+`POST` & `/api/v1/process-docx` & Upload a DOCX file for processing by the Python microservice. & Yes \\
+`GET` & `/api/rooms/:roomCode` & Get public details for a specific room. & No \\
+`POST` & `/api/rooms/:roomCode/submit` & Submit an answer to a question. & Yes \\
+`POST` & `/api/rooms/:roomCode/log-proctor-event` & Log a suspicious event from a Test Room. & Yes \\
+`GET` & `/api/discovery/nearby` & Find nearby rooms using GPS coordinates. & No \\
+`POST` & `/api/vouchers/verify` & Verify a voucher via its QR code data. & Yes (Host) \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\subsection{Security and Scalability Design}
+
+\subsubsection{Authentication and Security}
+\begin{itemize}
+    \item \textbf{JWT-Based Authentication:} The system uses JSON Web Tokens for stateless authentication. After a successful login, the client receives an access token which is sent in the `Authorization` header of subsequent requests. The flow is visualized in Figure \ref{fig:jwt-flow}.
+    \item \textbf{Password Security:} User passwords are never stored in plaintext. They are hashed using the `bcrypt` algorithm with a salt.
+    \item \textbf{Voucher Security:} Each voucher is tied to a unique, cryptographically random string. The `is_redeemed` flag provides replay protection, ensuring a voucher can only be used once.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.35\textwidth]{figures/jwt-flow.png}
+\caption{JWT-Based Authentication and Authorization Flow}
+\label{fig:jwt-flow}
+\end{figure}
+
+\FloatBarrier
+
+\subsubsection{Scalability}
+\begin{itemize}
+    \item \textbf{Stateless Backend:} The Node.js API server is designed to be completely stateless. It does not store any session-specific data in memory, allowing requests from a single user to be distributed across any available server instance.
+    \item \textbf{Database Scaling:} The MySQL database can be scaled vertically (more powerful hardware) or horizontally using read replicas to distribute read-heavy query loads.
+    \item \textbf{Independent Microservice Scaling:} If DOCX parsing becomes a bottleneck, the Python microservice can be scaled independently by deploying more instances, without affecting the performance of the core Node.js application. This is crucial as document and image processing are CPU-intensive tasks.
+\end{itemize}
+
+\FloatBarrier
+
+\section{Implementation Methodologies}
+\label{sec:implementation}
+
+This section details the technical implementation methodologies employed to translate the architectural designs into a functional system, covering the development environment, technology choices, and key implementation strategies.
+
+\subsection{Development Environment and Technology Stack}
+
+The technology stack was selected to optimize for developer productivity, performance, scalability, and a rich, modern user experience. The key technologies are summarized in Table \ref{tab:tech-stack}.
+
+\renewcommand{\arraystretch}{1.5}
+\setlength{\tabcolsep}{8pt}
+\begin{longtable}{
+>{\raggedright\arraybackslash}p{2.8cm} 
+>{\centering\arraybackslash}p{3.2cm} 
+>{\raggedright\arraybackslash}p{8cm}}
+
+\caption{Technology Stack and Rationale} 
+\label{tab:tech-stack} \\
+
+\toprule
+\textbf{Component} & \textbf{Technology / Library} & \textbf{Rationale} \\
+\midrule
+\endfirsthead
+
+\multicolumn{3}{l}{\tablename\ \thetable{}: Technology Stack and Rationale \textit{(continued)}} \\[0.25em]
+\toprule
+\textbf{Component} & \textbf{Technology / Library} & \textbf{Rationale} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{3}{r}{\textit{(continued on next page)}} \\ 
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+\textbf{Frontend} & \textbf{React 18 (with Vite)} &
+A high-performance library for building dynamic, component-based SPAs.
+Vite provides a significantly faster development experience than traditional bundlers. \\[0.5em]
+
+\textbf{Styling} & \textbf{Tailwind CSS} &
+A utility-first CSS framework that enables rapid, consistent, and responsive UI development directly within the JSX markup. \\[0.5em]
+
+\textbf{Backend (Core)} & \textbf{Node.js / Express.js} &
+A lightweight and efficient JavaScript runtime, ideal for building fast, scalable, and I/O-intensive REST APIs and handling real-time connections. \\[0.5em]
+
+\textbf{Backend (Microservice)} & \textbf{Python 3 / FastAPI} &
+A high-performance and robust framework for building the specialized DOCX parsing microservice, leveraging Python's strong ecosystem for data processing and managing external processes. \\[0.5em]
+
+\textbf{Database} & \textbf{MySQL} &
+A reliable, widely-used relational database system that ensures data integrity and supports complex queries required for analytics and user data management. \\[0.5em]
+
+\textbf{File Storage} & \textbf{Firebase Storage} &
+A scalable and secure cloud storage solution that simplifies file uploads and management through its powerful SDKs and direct-to-cloud upload capabilities. \\[0.5em]
+
+\textbf{AI Service} & \textbf{Google Gemini API} &
+A state-of-the-art large language model used for the AI Question Generator, capable of understanding complex prompts and producing high-quality, structured JSON output. \\[0.5em]
+
+\textbf{Deployment} & \textbf{Vercel, Docker} &
+Vercel provides seamless CI/CD and optimized hosting for the React frontend.
+Docker is used to containerize the backend services for consistent, portable deployment. \\[0.5em]
+
+\end{longtable}
+
+\subsection{Use Case Analysis}
+
+\subsubsection{System Actors}
+\begin{itemize}
+    \item \textbf{Participant (User):} A registered user who joins rooms, participates in quizzes/tests, discovers content, and interacts with social features.
+    \item \textbf{Host (Educator):} A user with elevated privileges to create, manage, and monitor game rooms and test rooms.
+    \item \textbf{Administrator:} A privileged user responsible for overseeing the entire platform, managing content, and viewing system-wide analytics.
+\end{itemize}
+
+\subsubsection{Use Case Diagram}
+Figure \ref{fig:use-case-diagram} illustrates the primary interactions between the actors and the TEKUTOKO system.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.45\textwidth]{figures/use-case-diagram.png}
+\caption{Use Case Diagram for the TEKUTOKO System}
+\label{fig:use-case-diagram}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{Implementation Strategies}
+
+Key implementation strategies employed include:
+
+\begin{itemize}
+    \item \textbf{Component-Based Development:} The React frontend was developed using a component-based architecture, promoting code reuse and maintainability.
+    
+    \item \textbf{API-First Design:} API endpoints were designed and documented before implementation, ensuring clear contracts between frontend and backend.
+    
+    \item \textbf{Containerization:} Both backend services were containerized using Docker, ensuring consistent deployment environments and facilitating scalability.
+    
+    \item \textbf{Continuous Integration:} Git-based version control with automated deployment pipelines ensured rapid iteration and reliable releases.
+    
+    \item \textbf{Human-in-the-Loop AI:} AI-generated content always requires human review before being made available to learners, ensuring quality and accuracy.
+\end{itemize}
+
+This comprehensive methodological approach, spanning requirements engineering, system design, and implementation, provides the foundation for a robust, scalable, and effective e-learning platform that addresses the research objectives outlined in Chapter \ref{chap:introduction}.
