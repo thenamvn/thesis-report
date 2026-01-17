@@ -246,7 +246,7 @@ The TEKUTOKO platform builds upon and extends previous research in several impor
 
 \textbf{Compared to LMS platforms:} Traditional learning management systems like Google Classroom provide comprehensive course management but minimal gamification and basic integrity controls. TEKUTOKO sacrifices breadth of functionality (it's not a full LMS) to provide depth in engagement, intelligent content creation, and integrity monitoring.
 
-The primary contribution is not the invention of individual features, but their synergistic integration. Research by \citet{krath2021} emphasizes that effective educational technology requires theoretical grounding and thoughtful implementation—principles that guided TEKUTOKO's design. The platform demonstrates how multiple modern technologies can be integrated to create an experience greater than the sum of its parts.
+The primary contribution is not the invention of individual features, but their synergistic integration. Research by \citet{oliveira2023} emphasizes that effective educational technology requires theoretical grounding and thoughtful implementation—principles that guided TEKUTOKO's design. The platform demonstrates how multiple modern technologies can be integrated to create an experience greater than the sum of its parts.
 
 \subsection{Strengths and Limitations}
 
@@ -311,7 +311,7 @@ The final implementation uses a softer approach: suspicious events are logged fo
 
 Despite achieving high quality scores (4.79/5), the AI occasionally generated questions with subtle issues: cultural assumptions, ambiguous phrasing, or outdated information. The design decision to make the AI a "co-pilot" rather than a replacement for educators, with mandatory review and approval, proved crucial.
 
-This aligns with emerging consensus in the literature \citep{baidoo2023, chiu2024} that AI in education works best as an augmentation tool that enhances human capability rather than replacing human judgment. Educators bring irreplaceable qualities: understanding of local context, knowledge of individual student needs, and ethical judgment about appropriate assessment.
+This aligns with emerging consensus in the literature \citep{kasneci2023} that AI in education works best as an augmentation tool that enhances human capability rather than replacing human judgment. Educators bring irreplaceable qualities: understanding of local context, knowledge of individual student needs, and ethical judgment about appropriate assessment.
 
 \subsubsection{Pragmatic Microservices Over Dogmatic Architecture}
 
@@ -319,7 +319,7 @@ The initial architectural design considered a more granular microservice approac
 
 The final pragmatic approach—separating only the most distinct and computationally intensive component (DOCX processing)—provided the key benefits of microservices (independent scaling, technology optimization) without the full overhead. The lesson: architectural decisions should be driven by actual needs and constraints, not by following fashionable patterns dogmatically.
 
-This pragmatism reflects insights from \citet{taibi2020} about avoiding microservice anti-patterns and \citet{waseem2021} about the real-world challenges of microservice management.
+This pragmatism reflects insights from \citet{richards2020} about avoiding microservice anti-patterns and \citet{richards2020} about the real-world challenges of microservice management.
 
 \subsection{Implications for Educational Technology}
 
@@ -335,4 +335,4 @@ The successful integration demonstrated by TEKUTOKO has broader implications for
     \item \textbf{Architecture as Enabler:} The scalability and performance results validate that thoughtful architectural design is not just a technical concern but an enabler of educational innovation, allowing platforms to grow and evolve with user needs.
 \end{enumerate}
 
-These findings contribute to ongoing discussions about the future of educational technology in an era of rapid AI advancement and changing pedagogical needs, as explored by \citet{chiu2024} and \citet{martin2022}.
+These findings contribute to ongoing discussions about the future of educational technology in an era of rapid AI advancement and changing pedagogical needs, as explored by \citet{kasneci2023} and \citet{oliveira2023}.
