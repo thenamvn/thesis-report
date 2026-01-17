@@ -18,6 +18,8 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{tocbibind}
+\usepackage{array}
+\usepackage{ragged2e}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{placeins}
@@ -32,6 +34,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usetikzlibrary{calc} % Thư viện hỗ trợ tính toán tọa độ cho khung
+\newcolumntype{P}[1]{>{\RaggedRight\arraybackslash}p{#1}}
 
 \lstdefinelanguage{JSON}{
 	basicstyle=\ttfamily\small,

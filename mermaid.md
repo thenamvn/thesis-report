@@ -1,19 +1,28 @@
 python-microservice-flow.png
 ```mermaid
-graph TD
-    A["POST /api/v1/process-docx"]
-    A --> B["Save .docx file"]
-    B --> C["Convert DOCX → LaTeX + Extract media"]
+flowchart TB
+    A[POST /api/v1/process-docx]
+    B[Save DOCX file]
+    C[Convert DOCX to LaTeX<br/>and extract media]
 
-    %% nhánh song song ngang
-    C --> D1["Convert WMF/EMF → WebP"]
-    C --> D2["Parse LaTeX to extract questions"]
+    A --> B --> C
 
-    D1 --> E["Update image paths in JSON"]
+    subgraph P[Parallel Processing]
+        direction LR
+        D1[Convert WMF / EMF<br/>to WebP]
+        D2[Parse LaTeX<br/>to extract questions]
+    end
+
+    C --> D1
+    C --> D2
+
+    E[Update image paths<br/>in JSON]
+    G[Create database record]
+    H[Return success response]
+
+    D1 --> E
     D2 --> E
-    E --> F["Save output.json"]
-    F --> G["Create DB record"]
-    G --> H["Return success"]
+    E --> G --> H
 ```
 
 load-test-results.png

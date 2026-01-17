@@ -295,6 +295,137 @@ The system exposes a RESTful API for communication between the frontend and back
 }
 \end{table}
 \FloatBarrier
+
+\subsection{Python Microservice for DOCX Processing}
+\label{subsec:python-microservice}
+
+The DOCX processing microservice is a sophisticated backend component developed using Python and FastAPI. It serves as the engine for transforming static instructor-uploaded documents into interactive, secure assessments. Beyond simple file parsing, this microservice manages the entire lifecycle of an exam generated from a document, including creation, delivery, security validation, and results processing. Containerized via Docker, it operates independently of the main Node.js backend, ensuring that CPU-intensive parsing tasks do not degrade the performance of real-time user interactions.
+
+\subsubsection{The DOCX-to-JSON Pipeline}
+
+The core functionality of the microservice is the transformation of unstructured DOCX files into a structured, machine-readable JSON format used by the frontend. This pipeline is orchestrated by the \texttt{DocxService} class, which manages a strict sequence of operations to ensure data integrity and format consistency. The process is visualized in Figure \ref{fig:python-microservice-flow}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[height=0.7\textwidth]{figures/python-microservice-flow.png}
+\caption{Flowchart of the DOCX Processing Pipeline}
+\label{fig:python-microservice-flow}
+\end{figure}
+
+The pipeline executes the following stages:
+\begin{enumerate}
+    \item \textbf{Ingestion and Validation:} The service accepts a multipart/form-data upload containing the `.docx` file. It validates the file type and initializes a unique processing context identified by a UUID.
+    \item \textbf{Intermediate Conversion:} \texttt{Pandoc} is utilized to convert the binary DOCX format into LaTeX. This intermediate step is crucial as it normalizes the document structure (sections, lists, bold/italic text) and simplifies the extraction of embedded questions.
+    \item \textbf{Media Extraction and Optimization:} During conversion, all embedded images are extracted. The \texttt{ImageUtils} module subsequently scans these assets, identifying legacy formats often found in Word documents (e.g., WMF, EMF). It uses \texttt{ImageMagick} to transcode these into high-performance WebP format, optimizing them for web delivery. This process runs in parallel threads to minimize latency.
+    \item \textbf{Semantic Parsing:} A custom parser analyzes the LaTeX output to identify question blocks, distinguishing between question text, options, and correct answers marked by the instructor (e.g., via bolding or specific formatting).
+    \item \textbf{Resource Mapping:} Extracted image references in the text are dynamically replaced with public URLs pointing to the service's static file server.
+    \item \textbf{Persistence:} The final JSON structure is saved to disk, and a record is created in the database, marking the exam as ready for access.
+\end{enumerate}
+
+The orchestration logic is encapsulated in the \texttt{DocxService} class, as shown in Listing \ref{lst:docx-service}.
+
+\begin{lstlisting}[language=Python, caption={Core Logic of the DocxService Orchestrator}, label={lst:docx-service}]
+import pypandoc
+import os
+from app.utils.image_utils import ImageUtils
+from app.services.database_service import DatabaseService
+
+class DocxService:
+    def process_docx(self, input_path: str, uuid: str) -> dict:
+        """
+        Orchestrates the full DOCX processing pipeline.
+        """
+        output_dir = f"outputs/{uuid}"
+        media_dir = os.path.join(output_dir, "media")
+
+        # Step 1: Convert DOCX to LaTeX and extract media using Pandoc
+        latex_output_path = os.path.join(output_dir, "output.tex")
+        self.convert_docx_to_latex(input_path, latex_output_path, media_dir)
+
+        # Step 2: Convert extracted images (WMF/EMF) to WebP using ImageMagick
+        image_mapping = ImageUtils.convert_extracted_images(media_dir)
+
+        # Step 3: Parse the intermediate LaTeX file to build a question structure
+        questions_data = self.parse_latex_to_json(latex_output_path)
+
+        # Step 4: Update image sources in the JSON with the final public URLs
+        updated_questions = self.update_image_srcs(
+            questions_data, uuid, image_mapping
+        )
+
+        # Step 5: Save the final JSON output
+        final_json_path = os.path.join(output_dir, "output.json")
+        self.save_output_json(updated_questions, final_json_path)
+
+        # Step 6: Create an entry in the database
+        DatabaseService.create_test_exam_room(uuid=uuid, title="Generated Exam")
+
+        return {"status": "success", "uuid": uuid}
+
+    def convert_docx_to_latex(self, input_path, output_path, media_dir):
+        # Wrapper for pypandoc call with media extraction
+        pypandoc.convert_file(
+            input_path, 'latex',
+            outputfile=output_path,
+            extra_args=[f'--extract-media={media_dir}']
+        )
+\end{lstlisting}
+
+\subsubsection{API Interface and Lifecycle Management}
+
+The microservice exposes a comprehensive set of RESTful endpoints that manage the entire lifecycle of a document-based exam. These endpoints govern the process from initial document ingestion to final result analytics, ensuring secure and stateful interactions. The key lifecycle management endpoints are detailed in Table \ref{tab:microservice-api-lifecycle}.
+\renewcommand{\arraystretch}{1.25}
+\begin{longtable}{P{2.5cm} P{6.5cm} P{6.5cm}}
+\caption{Microservice API Endpoints for Exam Lifecycle Management} 
+\label{tab:microservice-api-lifecycle} \\
+
+\toprule
+\textbf{Lifecycle Stage} & \textbf{Endpoint / Method} & \textbf{Functionality \& Security Measures} \\
+\midrule
+\endfirsthead
+
+\multicolumn{3}{l}{\tablename\ \thetable{}: Microservice API Endpoints \textit{(continued)}} \\[0.25em]
+\toprule
+\textbf{Lifecycle Stage} & \textbf{Endpoint / Method} & \textbf{Functionality \& Security Measures} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{3}{r}{\textit{(continued on next page)}} \\ 
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+\textbf{1. Generation} &
+\texttt{POST} \newline
+\texttt{/api/v1/process-docx} &
+Accepts a raw DOCX file and metadata. Initiates the conversion pipeline and returns a unique \texttt{UUID} identifying the newly created exam room. \\
+
+\midrule
+\textbf{2. Delivery} &
+\texttt{GET} \newline
+\texttt{/api/v1/quiz/\{uuid\}} &
+Retrieves exam content for students.
+\textbf{Security:} Server-side filtration removes all correct-answer markers from the JSON response to prevent client-side inspection. \\
+
+\midrule
+\textbf{3. Submission} &
+\texttt{POST} \newline
+\texttt{/api/v1/quiz/check-answers} &
+Receives student answers and proctoring logs. Performs server-side scoring using the secure answer key and analyzes security logs to detect violations. \\
+
+\midrule
+\textbf{4. Analytics} &
+\texttt{GET} \newline
+\texttt{/api/v1/quiz/\{uuid\}/results} &
+Provides aggregate results, leaderboards, and detailed security incident reports for instructors to assess performance and academic integrity. \\
+
+\end{longtable}
+
+\FloatBarrier
+
+
 \subsection{Anti-Cheat System Design}
 \label{subsec:anti-cheat-design}
 
