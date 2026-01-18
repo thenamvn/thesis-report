@@ -191,3 +191,63 @@ graph TD
     UC4 -- includes --> UC5
     UC9 -- extends --> UC10
 ```
+
+k8s-architecture.png
+```mermaid
+graph TD
+    User((User)) -->|HTTP/HTTPS| Ingress[Nginx Ingress Controller]
+    
+    subgraph "Kubernetes Cluster"
+        Ingress -->|/| FrontendSvc[Frontend Service]
+        Ingress -->|/api/*| NodeSvc[Node.js Backend Service]
+        Ingress -->|/python-api/*| PySvc[Python Service]
+        
+        FrontendSvc --> FrontendPod[Frontend Pods]
+        NodeSvc --> NodePod[Node.js Pods]
+        PySvc --> PyPod[Python Pods]
+        
+        NodePod -->|Internal DNS| PySvc
+        NodePod -->|Internal DNS| MySQLSvc[MySQL Service]
+        PyPod -->|Internal DNS| MySQLSvc
+        
+        MySQLSvc --> MySQLPod[(MySQL Database)]
+        
+        subgraph "Volumes"
+            MySQLPod -.->|Mounts| MySQLPVC[Database PVC]
+            PyPod -.->|Mounts| WorkspacePVC[Processing PVC]
+        end
+    end
+```
+
+cicd-pipeline.png
+```mermaid
+flowchart LR
+    Dev[Developer] -->|Push Code| Repo[GitHub Repository]
+    Repo -->|Webhook| Actions[GitHub Actions Runner]
+    
+    subgraph CI[Continuous Integration]
+        Lint[Linting & Static Analysis]
+        Test[Unit Tests (PyTest/Jest)]
+        Lint --> Test
+    end
+    
+    Actions --> CI
+    
+    subgraph CD[Continuous Delivery]
+        Build[Build Docker Image]
+        Push[Push to Registry]
+        Deploy[kubectl set image]
+        
+        Build --> Push --> Deploy
+    end
+    
+    CI -->|Success| CD
+    
+    subgraph K8s[Kubernetes Cluster]
+        Pod1[Old Pod]
+        Pod2[New Pod]
+        
+        Deploy -->|Rolling Update| Pod2
+        Pod2 -.->|Replace| Pod1
+    end
+```
