@@ -204,96 +204,110 @@ The main components are the React frontend, a core Node.js backend API, a specia
 \end{itemize}
 
 \subsection{Database Design}
+\label{subsec:database-design}
 
-The relationships between the main entities in the system are illustrated in the ERD in Figure \ref{fig:erd-diagram}.
+The database architecture is built upon a normalized relational model (MySQL) to ensure data integrity, reliable component interactions, and scalability. To enhance clarity and modularity, the system's data model is conceptually divided into four functional modules: User \& Security, Room \& Content, User Interaction \& Outcomes, and Rewards \& Utilities.
+
+\subsubsection{User and Security Module}
+This module forms the backbone of identity management and social features. It centers on the `USERS` table, which stores core credentials and statistics. 
+\begin{itemize}
+    \item \textbf{User Profiles:} The `USER_PROFILE` table, maintaining a 1-to-1 relationship with `USERS`, stores extended personal information (avatar, bio, social links).
+    \item \textbf{Social Graph:} The `USER_FOLLOWS` table implements a many-to-many self-referencing relationship to manage follower/following dynamics between users.
+    \item \textbf{Security:} The `OTP` table handles temporary tokens for account verification, while the isolated `ADMIN_ACCOUNT` table secures privileged access.
+\end{itemize}
+This structure ensures separation of critical authentication data from public profile information, as illustrated in Figure \ref{fig:erd-user-security}.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{figures/erd-diagram.png}
-\caption{Database Entity-Relationship Diagram (ERD)}
-\label{fig:erd-diagram}
+\includegraphics[width=\textwidth]{figures/erd-user-security.png}
+\caption{ER Diagram: User and Security Module}
+\label{fig:erd-user-security}
 \end{figure}
+\FloatBarrier
 
-Below are the SQL schemas for some of the key tables in the database.
+\subsubsection{Room and Content Management Module}
+This module manages the core educational content. The central entity is `ROOM`, which can be of type 'quiz' or 'test'.
+\begin{itemize}
+    \item \textbf{Room Ownership:} A host (`USERS`) manages multiple `ROOM`s (1-to-Many).
+    \item \textbf{Questions Repository:} Each `ROOM` contains multiple `QUESTIONS`. Questions support diverse types (Multiple Choice, Text, etc.) and store the correct answer hash or text.
+    \item \textbf{Option Banks:} For multiple-choice questions, the `QUESTION_OPTIONS` table stores possible answers, linked via a foreign key to the parent question.
+\end{itemize}
+This hierarchy allows for structured content organization, supporting both manual creation and AI-generated imports (Figure \ref{fig:erd-room-content}).
 
-\begin{lstlisting}[language=SQL, caption={SQL Schema for the `users` and `rooms` tables}]
--- Users table
-CREATE TABLE `users` (
-  `user_id` INT AUTO_INCREMENT PRIMARY KEY,
-  `username` VARCHAR(50) NOT NULL UNIQUE,
-  `email` VARCHAR(100) NOT NULL UNIQUE,
-  `password_hash` VARCHAR(255) NOT NULL,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/erd-room-content.png}
+\caption{ER Diagram: Room and Content Management}
+\label{fig:erd-room-content}
+\end{figure}
+\FloatBarrier
 
--- Rooms table
-CREATE TABLE `rooms` (
-  `room_id` INT AUTO_INCREMENT PRIMARY KEY,
-  `host_id` INT NOT NULL,
-  `room_code` VARCHAR(8) NOT NULL UNIQUE,
-  `title` VARCHAR(255) NOT NULL,
-  `room_type` ENUM('quiz', 'test') NOT NULL,
-  `gps_lat` DECIMAL(10, 8),
-  `gps_lng` DECIMAL(11, 8),
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`host_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
-);
-\end{lstlisting}
+\subsubsection{Interaction and Assessment Module}
+This module tracks the dynamic interactions between users and the content, recording performance and integrity data.
+\begin{itemize}
+    \item \textbf{Submissions:} The `USER_SUBMISSIONS` table serves as a ledger, recording every answer attempt a user makes for a specific question within a room.
+    \item \textbf{Exam Results:} For the specific use case of Test Rooms (`TEST_EXAM_ROOMS`), the `EXAM_RESULTS` table aggregates the final performance metrics (score percentage, correct count).
+    \item \textbf{Integrity Logs:} The `activity_log` JSON field within `EXAM_RESULTS` and related tables stores timestamped security events (tab switching, focus loss) detected by the anti-cheat system.
+\end{itemize}
+Figure \ref{fig:erd-interaction-results} visualizes how user actions map to persistent records.
 
-\begin{lstlisting}[language=SQL, caption={SQL Schema for the `proctoring_logs` and `vouchers` tables}]
--- Proctoring logs table
-CREATE TABLE `proctoring_logs` (
-  `log_id` INT AUTO_INCREMENT PRIMARY KEY,
-  `room_id` INT NOT NULL,
-  `user_id` INT NOT NULL,
-  `event_type` ENUM('tab_switch', 'inactivity', 'paste_attempt') NOT NULL,
-  `details` TEXT,
-  `event_timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`room_id`) REFERENCES `rooms`(`room_id`) ON DELETE CASCADE,
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE
-);
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/erd-interaction-results.png}
+\caption{ER Diagram: Submissions, Exams, and Integrity}
+\label{fig:erd-interaction-results}
+\end{figure}
+\FloatBarrier
 
--- Vouchers table
-CREATE TABLE `vouchers` (
-  `voucher_id` INT AUTO_INCREMENT PRIMARY KEY,
-  `room_id` INT NOT NULL,
-  `user_id` INT NOT NULL,
-  `qr_code_data` VARCHAR(255) NOT NULL UNIQUE,
-  `reward_description` TEXT NOT NULL,
-  `is_redeemed` BOOLEAN NOT NULL DEFAULT FALSE,
-  `issued_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `redeemed_at` TIMESTAMP NULL,
-  FOREIGN KEY (`room_id`) REFERENCES `rooms`(`room_id`),
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`)
-);
-\end{lstlisting}
+\subsubsection{Rewards and Utilities Module}
+This section handles the gamification and auxiliary system features.
+\begin{itemize}
+    \item \textbf{Voucher System:} The `VOUCHERS` table stores digital rewards. These are distributed by `ROOM`s and claimed by `USERS` (`USER_VOUCHERS`). Additionally, specific questions can trigger voucher drops (`QUESTION_VOUCHERS`).
+    \item \textbf{Reporting:} The `REPORTS` table allows users to flag inappropriate rooms, facilitating community moderation.
+    \item \textbf{Media Gallery:} The `IMAGES` table tracks files uploaded by hosts, linking them to specific rooms for easy retrieval and cleanup.
+\end{itemize}
+This modular design (Figure \ref{fig:erd-rewards-utilities}) allows the gamification layer to function independently without cluttering the core assessment logic.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/erd-rewards-utilities.png}
+\caption{ER Diagram: Rewards and System Utilities}
+\label{fig:erd-rewards-utilities}
+\end{figure}
+\FloatBarrier
 
 \subsection{API Design and Specification}
 
 The system exposes a RESTful API for communication between the frontend and backend. Endpoints are logically structured around resources, as shown in Table \ref{tab:api-endpoints}.
-\begin{table}[htbp]
-\centering
-\caption{Key API Endpoint Specifications}
-\label{tab:api-endpoints}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{l l p{6cm} l}
+\renewcommand{\arraystretch}{1.5}
+\begin{longtable}{p{1.2cm} p{7.5cm} p{4.3cm} p{2.0cm}}
+\caption{Key API Endpoint Specifications} 
+\label{tab:api-endpoints} \\
 \toprule
 \textbf{Method} & \textbf{Endpoint} & \textbf{Description} & \textbf{Auth Required} \\
 \midrule
-`POST` & `/auth/register` & Register a new user. & No \\
-`POST` & `/auth/login` & Authenticate a user and return a JWT. & No \\
-`POST` & `/api/rooms` & Create a new Quiz or Test Room. & Yes \\
-`POST` & `/api/rooms/generate-ai` & Generate questions for a room using AI. & Yes \\
-`POST` & `/api/v1/process-docx` & Upload a DOCX file for processing by the Python microservice. & Yes \\
-`GET` & `/api/rooms/:roomCode` & Get public details for a specific room. & No \\
-`POST` & `/api/rooms/:roomCode/submit` & Submit an answer to a question. & Yes \\
-`POST` & `/api/rooms/:roomCode/log-proctor-event` & Log a suspicious event from a Test Room. & Yes \\
-`GET` & `/api/discovery/nearby` & Find nearby rooms using GPS coordinates. & No \\
-`POST` & `/api/vouchers/verify` & Verify a voucher via its QR code data. & Yes (Host) \\
+\endfirsthead
+\multicolumn{4}{c}{{\bfseries Table \thetable\ continued from previous page}} \\
+\toprule
+\textbf{Method} & \textbf{Endpoint} & \textbf{Description} & \textbf{Auth Required} \\
+\midrule
+\endhead
 \bottomrule
-\end{tabular}%
-}
-\end{table}
+\endfoot
+\bottomrule
+\endlastfoot
+
+\texttt{POST} & \texttt{/auth/register} & Register a new user. & No \\
+\texttt{POST} & \texttt{/auth/login} & Authenticate a user and return a JWT. & No \\
+\texttt{POST} & \texttt{/api/rooms} & Create a new Quiz or Test Room. & Yes \\
+\texttt{POST} & \texttt{/api/rooms/generate-ai} & Generate questions for a room using AI. & Yes \\
+\texttt{POST} & \texttt{/api/v1/process-docx} & Upload a DOCX file for processing by the Python microservice. & Yes \\
+\texttt{GET} & \texttt{/api/rooms/:roomCode} & Get public details for a specific room. & No \\
+\texttt{POST} & \texttt{/api/rooms/:roomCode/submit} & Submit an answer to a question. & Yes \\
+\texttt{GET} & \texttt{/api/discovery/nearby} & Find nearby rooms using GPS coordinates. & No \\
+\texttt{POST} & \texttt{/api/vouchers/verify} & Verify a voucher via its QR code data. & Yes (Host) \\
+
+\end{longtable}
 \FloatBarrier
 
 \subsection{Python Microservice for DOCX Processing}

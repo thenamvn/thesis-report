@@ -251,3 +251,149 @@ flowchart LR
         Pod2 -.->|Replace| Pod1
     end
 ```
+
+erd-user-security.png
+```mermaid
+erDiagram
+    USERS ||--|| USER_PROFILE : "has"
+    USERS ||--o{ USER_FOLLOWS : "follower/following"
+    USERS ||--o| OTP : "verification"
+    
+    USERS {
+        int id PK
+        string username UK
+        string fullname
+        int follower_count
+        int following_count
+    }
+    USER_PROFILE {
+        int id PK
+        string username FK
+        string avatarImage
+        string job
+        string address
+        string social_links
+    }
+    USER_FOLLOWS {
+        int id PK
+        string follower_username FK
+        string following_username FK
+    }
+    OTP {
+        string username PK
+        string otp
+        bigint otp_expiry
+    }
+    ADMIN_ACCOUNT {
+        int id PK
+        string username UK
+        string password
+    }
+```
+
+erd-room-content.png
+```mermaid
+erDiagram
+    USERS ||--o{ ROOM : "manages"
+    ROOM ||--o{ ROOM_USERS : "participants"
+    ROOM ||--o{ QUESTIONS : "contains"
+    QUESTIONS ||--o{ QUESTION_OPTIONS : "has_options"
+
+    ROOM {
+        string room_id PK
+        string admin_username FK
+        string room_title
+        enum room_type
+        string id_test
+    }
+    ROOM_USERS {
+        string room_id PK-FK
+        string username PK-FK
+    }
+    QUESTIONS {
+        int question_id PK
+        string room_id FK
+        int question_number
+        text question_text
+        enum question_type
+        text correct_text_answer
+    }
+    QUESTION_OPTIONS {
+        int option_id PK
+        int question_id FK
+        string option_text
+        bool is_correct
+    }
+```
+
+erd-interaction-results.png
+```mermaid
+erDiagram
+    ROOM ||--o{ USER_SUBMISSIONS : "records"
+    QUESTIONS ||--o{ USER_SUBMISSIONS : "answered_in"
+    TEST_EXAM_ROOMS ||--o{ EXAM_RESULTS : "tracks"
+
+    USER_SUBMISSIONS {
+        int submission_id PK
+        string user_id
+        string room_id FK
+        int question_id FK
+        string submitted_answer
+        bool is_correct
+    }
+    TEST_EXAM_ROOMS {
+        int id PK
+        string uuid UK
+        string username
+        string title
+    }
+    EXAM_RESULTS {
+        int id PK
+        string test_exam_uuid FK
+        int correct_answers
+        float score_percentage
+        bool cheating_detected
+        json activity_log
+    }
+```
+
+erd-rewards-utilities.png
+```mermaid
+erDiagram
+    ROOM ||--o{ VOUCHERS : "distributes"
+    QUESTIONS ||--o{ QUESTION_VOUCHERS : "triggers"
+    VOUCHERS ||--o{ QUESTION_VOUCHERS : "linked"
+    USERS ||--o{ USER_VOUCHERS : "claims"
+    ROOM ||--o{ REPORTS : "has"
+    ROOM ||--o{ IMAGES : "gallery"
+
+    VOUCHERS {
+        int id PK
+        string room_id FK
+        enum reward_type
+        string ticket_name
+        date expiration_date
+    }
+    QUESTION_VOUCHERS {
+        int id PK
+        int question_id FK
+        int voucher_id FK
+    }
+    USER_VOUCHERS {
+        int id PK
+        string username FK
+        int voucher_id FK
+    }
+    REPORTS {
+        int id PK
+        string room_id FK
+        string username FK
+        string reason
+    }
+    IMAGES {
+        int image_id PK
+        string room_id FK
+        string uploader_username FK
+        string image_path
+    }
+```
