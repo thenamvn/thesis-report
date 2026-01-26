@@ -98,7 +98,7 @@ To solve this, Kubernetes \textbf{Services} are employed. A Service defines a lo
 \end{enumerate}
 
 \subsubsection{State Management and Persistence}
-Although the application logic is stateless \citep{newman2021}, data persistence is critical. **PersistentVolumeClaims (PVCs)** constitute the mechanism used to abstract storage provisioning:
+Although the application logic is stateless \citep{newman2021}, data persistence is critical. \textbf{PersistentVolumeClaims (PVCs)} constitute the mechanism used to abstract storage provisioning:
 \begin{itemize}
     \item \textbf{Database Persistence:} A 5Gi PVC attached to the MySQL Deployment ensures user data is preserved even if the database container crashes or restarts.
     \item \textbf{Processing Workspace:} The Python microservice mounts a 2Gi PVC at \texttt{/app/outputs}. This shared workspace simplifies the processing pipeline, allowing the service to extract heavy media files from DOCX archives to disk without consuming the container's ephemeral memory, preventing \textit{Out Of Memory (OOM)} errors during high load.
