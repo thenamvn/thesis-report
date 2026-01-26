@@ -184,6 +184,44 @@ The inactivity detection showed slightly lower but still excellent accuracy at 9
 
 These results demonstrate that a lightweight, non-invasive system can serve as a strong and reliable deterrent for low- to medium-stakes assessments. While it cannot prevent all forms of cheating (particularly off-screen activities), it successfully addresses the most common digital integrity violations while maintaining user privacy and avoiding the technical complexity and cost of camera-based proctoring systems.
 
+\subsection{System Functional Verification}
+\label{sec:functional-verification}
+
+Beyond the specific experimental scenarios, a comprehensive functional verification was conducted to ensure the system meets the core requirements defined in Chapter 3. Table \ref{tab:functional-verification} summarizes the testing status of key system features, providing a clear "What and How" view of the implementation status.
+
+\begin{table}[htbp]
+\centering
+\caption{System Feature Verification Matrix}
+\label{tab:functional-verification}
+\begin{tabularx}{\textwidth}{|X|c|X|}
+\hline
+\textbf{Feature Group} & \textbf{Status} & \textbf{Notes/Limitations} \\
+\hline
+\textbf{Authentication \& Authorization} & Pass & JWT implementation is stable; Role-based access (Host vs. Player) works as expected. \\
+\hline
+\textbf{Quiz Management} & Pass & CRUD operations function correctly. Image upload is supported. \\
+\hline
+\textbf{AI Question Generation} & Pass & Integration with Gemini API is reliable and connects seamlessly to the quiz editor. \\
+\hline
+\textbf{Real-time Deployment} & Pass & Socket.io handles state synchronization (Join, Answer, Score Update) effectively under tested loads. \\
+\hline
+\textbf{Anti-Cheating Module} & Pass & Successfully detects and logs browser tab switching and paste events (as per Scenario 4). \\
+\hline
+\textbf{O2O Voucher System} & Pass & QR code generation and "Merchant Scan" flow works correctly, closing the Online-to-Offline loop. \\
+\hline
+\textbf{Location-Based Services} & Pass & "Find Rooms Nearby" correctly filters active rooms based on geospatial coordinates. \\
+\hline
+\textbf{Result Export} & Partial & CSV export works correctly. PDF export functionality is operational but suffers from font rendering issues with some Vietnamese characters. \\
+\hline
+\textbf{UI/UX Responsiveness} & Partial & Desktop and Tablet views are optimized. Mobile view exhibits minor layout shifts on very small screens (<375px width). \\
+\hline
+\textbf{Automated Testing} & Partial & Backend API has robust unit test coverage. Frontend UI validation currently relies on manual testing; automated UI tests are not yet implemented. \\
+\hline
+\end{tabularx}
+\end{table}
+
+This verification confirms that the core "Happy Path" workflows for both the Educational (Quiz) and Business (O2O Voucher) aspects of the system are fully functional. The identified partial statuses (e.g., PDF fonts, Mobile layout, Frontend tests) represent known technical debt and are documented here for objectivity. These limitations define the scope for future work and maintenance, which will be discussed in Chapter 5.
+
 \section{Interpretation and Discussion of Findings}
 \label{sec:discussion}
 
