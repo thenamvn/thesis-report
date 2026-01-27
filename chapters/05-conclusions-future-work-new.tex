@@ -12,58 +12,34 @@ The research was motivated by persistent problems in contemporary e-learning sys
 
 Through a rigorous research methodology spanning requirements engineering, system design, implementation, and empirical evaluation, this thesis demonstrated that modern technologies can be thoughtfully integrated to create educational platforms that are simultaneously more engaging, efficient, secure, and scalable than traditional approaches.
 
-\subsection{Key Findings and Contributions}
+\subsection{Key Findings and Achievements}
 
-The research yielded several significant findings supported by empirical evidence:
+The development and testing phase yielded several significant technical and functional achievements, as detailed in Chapter 4:
 
-\subsubsection{User Engagement and Usability}
+\subsubsection{Functional Completeness and Reliability}
 
-The integration of mission-based gamification, reward systems, and location-based discovery significantly improved user engagement and perceived usability. The treatment group achieved a System Usability Scale (SUS) score of 85.5, placing the platform in the "Excellent" category and representing a 27.6\% improvement over the control group. This finding validates the theoretical foundation of Self-Determination Theory as applied to educational gamification design.
+The comprehensive functional testing demonstrated that the platform successfully meets all specified requirements. The system passed 100\% of the defined test cases across four key modules: Authentication, Room Management, Real-time Gameplay, and O2O features. Critical workflows, such as the real-time synchronization of game states via Socket.io and the generation of O2O vouchers, were proven to be robust under normal operating conditions. The integration of social login (Google, LINE) further enhanced the accessibility of the platform.
 
-The qualitative feedback revealed that users particularly appreciated tangible elements like the QR-code reward system and the location-based discovery feature, which connected digital learning with physical spaces and real-world incentives. This suggests that effective gamification extends beyond simple points and badges to create meaningful connections between online activities and offline experiences.
+\subsubsection{AI Integration Feasibility}
 
-\subsubsection{AI-Enhanced Educator Productivity}
-
-The AI-powered question generation module achieved two critical objectives: high-quality output and substantial efficiency gains. Expert evaluators rated AI-generated content at 4.79 out of 5 across dimensions of relevance, clarity, and factual accuracy—quality comparable to human-created questions. Simultaneously, the system enabled educators to create assessments 73.4\% faster than manual methods, reducing a task that typically requires 15.8 minutes to just 4.2 minutes.
-
-This finding has profound implications for educational practice. By automating the time-consuming aspects of content creation while maintaining pedagogical quality through human review, AI can free educators to focus on higher-value activities like personalized instruction, curriculum innovation, and student mentoring. The human-in-the-loop design proved essential for maintaining quality while capturing efficiency benefits.
-
-\subsubsection{Privacy-Respecting Academic Integrity}
-
-The lightweight, browser-based proctoring system demonstrated that acceptable levels of academic integrity monitoring can be achieved without invasive surveillance. The system achieved 96.7-100\% detection accuracy for common browser-based cheating behaviors (tab-switching, unauthorized paste attempts, suspicious inactivity) while respecting student privacy and avoiding the technical complexity and cost of camera-based systems.
-
-This finding is particularly significant in the context of ongoing debates about proctoring ethics and accessibility. The results suggest that for many educational contexts—particularly formative assessments and low- to medium-stakes exams—non-invasive behavioral monitoring provides an optimal balance of integrity, privacy, and user experience. However, the research also acknowledges the system's designed limitations regarding off-screen activities, positioning it as a deterrent rather than a guarantee.
+The implementation of the AI-powered content generation module validated the feasibility of integrating Large Language Models (LLMs) into educational workflows. Testing confirmed that the system could successfully interface with external APIs (Google Gemini) to transform simple keyword inputs into structured, playable content within seconds. This feature effectively solves the "cold start" problem for educators, significantly reducing the barrier to creating new quizzes.
 
 \subsubsection{Scalable System Architecture}
 
-The microservice-based architecture demonstrated quantifiable benefits in performance, scalability, and maintainability. Load testing revealed that the system sustained 280 requests per second with sub-300ms average latency and zero errors, validating the architecture's ability to handle significant concurrent usage. The design's stateless nature and service independence enable straightforward horizontal scaling to meet growing demand.
-
-Beyond performance metrics, the architecture provided practical development benefits: technology optimization (leveraging Python for document processing, Node.js for real-time APIs), fault isolation (service failures don't cascade), and development velocity (parallel work on independent services). These benefits support the platform's long-term evolvability and maintenance.
+The microservice-based architecture demonstrated quantifiable benefits in performance and scalability. As evidenced by the load testing results in Chapter 4, the system sustained 280 requests per second with sub-300ms average latency and zero errors. This validates the architectural decision to decouple the real-time game engine from the RESTful API services, ensuring that heavy traffic in discovery or content creation does not degrade the gameplay experience.
 
 \subsection{Research Contributions}
 
-This thesis makes several distinct contributions to both academic knowledge and practical applications in educational technology:
+This thesis makes several distinct contributions to the field of software engineering in educational technology:
 
-\subsubsection{Theoretical Contributions}
-
-\begin{enumerate}
-    \item \textbf{Integrated Framework:} The thesis proposes and validates a novel framework for synergistically combining gamification theory, AI in education, online proctoring principles, and modern software architecture. This framework demonstrates how distinct technological domains can be woven together to address interconnected educational challenges holistically rather than in isolation.
-    
-    \item \textbf{Empirical Evidence:} The study contributes new empirical data on the measurable impacts of AI-driven content generation on educational workflows, the effects of mission-based gamification on user behavior, and the effectiveness of lightweight proctoring as a middle-ground approach to academic integrity. These findings advance understanding of how emerging technologies can be effectively applied in educational contexts.
-    
-    \item \textbf{Design Principles:} The research identifies and validates specific design principles for educational technology, including the importance of human-in-the-loop AI, privacy-preserving security, and pragmatic microservice architecture. These principles provide guidance for future platform development.
-\end{enumerate}
-
-\subsubsection{Practical Contributions}
+\subsubsection{System Design and Implementation}
 
 \begin{enumerate}
-    \item \textbf{Functional Platform Prototype:} TEKUTOKO itself serves as a tangible proof-of-concept that demonstrates the feasibility and effectiveness of integrating advanced technologies in educational settings. The platform can be deployed, tested, and adapted by educational institutions or extended by researchers.
+    \item \textbf{Integrated LBS-Gamification Framework:} The thesis presents a verified architectural blueprint for combining Location-Based Services (LBS) with real-time gamification. The successful implementation of the "Nearby" discovery feature serves as a reference for future developers building physical-digital hybrid learning tools.
     
-    \item \textbf{Architectural Blueprint:} The detailed system design provides a practical architectural model for building scalable, maintainable, and resilient next-generation e-learning platforms. The pragmatic microservice approach—separating only truly distinct services—offers a balanced path between monolithic simplicity and full microservice complexity.
+    \item \textbf{High-Performance Assessment Engine:} The system provides a practical implementation pattern for handling real-time, synchronous multi-user interactions using Node.js and WebSockets, proven to handle high concurrency with minimal latency.
     
-    \item \textbf{Implementation Patterns:} The thesis documents specific implementation patterns for AI integration (prompt engineering strategies), proctoring (browser event monitoring), and gamification (reward systems with QR verification), providing practical guidance for developers and researchers working on similar projects.
-    
-    \item \textbf{Evaluation Framework:} The comprehensive, mixed-methods evaluation approach—combining quantitative metrics (SUS scores, task times, detection rates, load testing) with qualitative feedback—provides a template for rigorously assessing educational technology platforms across multiple dimensions.
+    \item \textbf{Modern O2O Education Model:} The platform demonstrates a working prototype of the "Online to Offline" model in education, where digital achievements are convertible to physical rewards, providing a technical foundation for exploring new incentive mechanisms in learning.
 \end{enumerate}
 
 \subsection{Addressing the Research Gap}
@@ -294,7 +270,7 @@ To maximize impact and enable broader research, future work could focus on build
 
 This thesis has demonstrated that the persistent challenges of engagement, efficiency, integrity, and scalability in e-learning can be effectively addressed through thoughtful integration of modern technologies. By combining gamification grounded in motivational theory, AI-powered content generation with human oversight, privacy-respecting academic integrity monitoring, and scalable microservice architecture, the TEKUTOKO platform provides a comprehensive solution that advances the state of the art in educational technology.
 
-The empirical validation—showing significant improvements in usability (27.6%), efficiency (73.4% time reduction), and integrity monitoring (96.7-100% detection accuracy) while maintaining excellent performance under load—demonstrates that this integrated approach delivers measurable benefits across multiple dimensions simultaneously.
+The empirical validation—showing the platform's ability to handle high concurrency (280 RPS) and the successful execution of all planned features—demonstrates that this integrated approach delivers a robust and reliable educational tool.
 
 Perhaps most importantly, this research illustrates a path forward for educational technology in an era of rapid AI advancement and changing pedagogical needs. The future of e-learning lies not in any single technology, but in the \textbf{synergistic integration} of multiple innovations, guided by sound pedagogical principles and empirical evidence, to create learning experiences that are simultaneously more effective, efficient, engaging, and equitable than current approaches.
 
