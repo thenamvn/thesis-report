@@ -66,6 +66,31 @@ The core interactive experience is divided into two distinct views. Figure \ref{
 \end{figure}
 \FloatBarrier
 
+\subsection{Online Anti-Cheat System}
+To maintain academic integrity during remote assessments, the system implements a lightweight, browser-based anti-cheat mechanism. As demonstrated in Figure \ref{fig:anticheat-monitor}, the "Security Mode" is activated at the top of the assessment interface, continuously tracking user interactions.
+
+When the system detects prohibited actions such as tab switching or window minimization, it immediately triggers a "Violation Warning" (Figure \ref{fig:anticheat-warning}). This alert interrupts the exam flow, records the incident count, and warns the user that exceeding the violation threshold (e.g., 5 attempts) will result in automatic termination of the session.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.85\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{figures/ui-anticheat-monitor.png}
+        \caption{Active Security Mode Dashboard}
+        \label{fig:anticheat-monitor}
+    \end{minipage}
+    
+    \vspace{0.5cm}
+    
+    \begin{minipage}{0.85\textwidth}
+        \centering
+        \includegraphics[width=1\textwidth]{figures/ui-anticheat-warning.png}
+        \caption{Violation Warning Overlay}
+        \label{fig:anticheat-warning}
+    \end{minipage}
+\end{figure}
+\FloatBarrier
+
 \section{Functional Testing Results}
 \label{sec:functional-testing}
 To ensure the system reliability, rigorous functional testing was conducted across all major modules. The following tables detail the test cases (TC) executed, verifying compliance with the Functional Requirements (FR) specified in Chapter 3.
