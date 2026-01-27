@@ -17,6 +17,25 @@ Copilot được phép sinh nội dung cho:
 - Summarization & explanation
 - Research planning & presentation
 
+# Mọi nội dung sinh ra cho Thesis sẽ tuân thủ khung chương hồi sau:
+- ABSTRACT
+- ACKNOWLEDGEMENTS
+- TABLE OF CONTENTS
+- CHAPTER 1: INTRODUCTION
+  - 1.1. Background of additive manufacturing
+  - 1.2. Motivations
+  - 1.3. Research objectives
+- CHAPTER 2: LITERATURE REVIEW
+  - 2.1. Overview of the topics
+  - 2.2. Review of different methodologies
+  - 2.3. Discussion (Research Gaps)
+- CHAPTER 3: METHODOLOGIES
+- CHAPTER 4: RESULTS AND DISCUSSIONS
+- CHAPTER 5: CONCLUSIONS AND FUTURE WORK
+  - 5.1. Conclusions
+  - 5.2. Future work
+- REFERENCES (BibTeX format)
+
 ## Nguyên tắc tuyệt đối
 - KHÔNG bịa tài liệu tham khảo.
 - KHÔNG sinh DOI, journal, conference nếu chưa chắc tồn tại.
