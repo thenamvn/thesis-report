@@ -7,19 +7,19 @@
 The TEKUTOKO platform has been fully developed and deployed, featuring a modern, responsive user interface. The following visual evidence demonstrates the key components of the live system.
 
 \subsection{Authentication and Dashboard}
-Users are greeted with a secure login interface implementing JWT-based authentication (Figure \ref{fig:ui-login}). Upon logging in, the Dashboard (Figure \ref{fig:ui-dashboard}) serves as the central discovery hub. It displays all active rooms available for joining, supports keyword-based search, and features a specialized "Nearby" filter that utilizes GPS to locate rooms within the user's vicinity.
+Users are greeted with a secure login interface implementing JWT-based authentication, alongside OAuth 2.0 integration for seamless access via Google and LINE accounts (Figure \ref{fig:ui-login}). Upon logging in, the Dashboard (Figure \ref{fig:ui-dashboard}) serves as the central discovery hub. It displays all active rooms available for joining, supports keyword-based search, and features a specialized "Nearby" filter that utilizes GPS to locate rooms within the user's vicinity.
 
 \begin{figure}[htbp]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=0.4\textwidth]{figures/ui-login.png}
+        \includegraphics[width=0.6\textwidth]{figures/ui-login.png}
         \caption{Login Interface}
         \label{fig:ui-login}
     \end{minipage}\hfill
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=0.4\textwidth]{figures/ui-dashboard.png}
+        \includegraphics[width=0.6\textwidth]{figures/ui-dashboard.png}
         \caption{Host Dashboard Interface}
         \label{fig:ui-dashboard}
     \end{minipage}
@@ -27,33 +27,44 @@ Users are greeted with a secure login interface implementing JWT-based authentic
 \FloatBarrier
 
 \subsection{Room Management and AI Generation}
-The content creation workflow is streamlined via the Room Manager. Figure \ref{fig:room-generator} shows the manual creation interface, while Figure \ref{fig:room-ai} demonstrates the AI-assisted generation feature, where hosts input a topic to receive a structured quiz.
+The content creation workflow is streamlined via the Room Manager. As shown in Figure \ref{fig:room-generator}, hosts can configure detailed room settings, including titles, rules, descriptions, and optional rewards for top performers. To accelerate this process, the system features an "AI Question Generator" button which opens a dedicated interface (Figure \ref{fig:room-ai}). Here, hosts can automatically generate a full question set by simply defining the topic, difficulty level, and desired number of questions.
 
 \begin{figure}[htbp]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/ui-room-generator.png}
+        \includegraphics[width=0.75\textwidth]{figures/ui-room-generator.png}
         \caption{Manual Room Creation Interface}
         \label{fig:room-generator}
     \end{minipage}\hfill
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/ui-room-ai-generator.png}
+        \includegraphics[width=0.75\textwidth]{figures/ui-room-ai-generator.png}
         \caption{AI Question Generator Interface}
         \label{fig:room-ai}
     \end{minipage}
 \end{figure}
+\clearpage
 
 \subsection{Real-time Gameplay Interface}
 The core interactive experience takes place in the Quiz Room. Figure \ref{fig:quiz-room} captures the participant view during a live session, showing the question display, timer, and answer options synchronized in real-time.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.9\textwidth]{figures/ui-quizz-room.png}
-    \caption{Real-time Quiz Room (Participant View)}
-    \label{fig:quiz-room}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=0.75\textwidth]{figures/ui-quizz-room.png}
+        \caption{Quiz Room (Participant View)}
+        \label{fig:quiz-room}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=0.75\textwidth]{figures/ui-room-ai-generator.png}
+        \caption{AI Question Generator Interface}
+        \label{fig:room-ai-aaa}
+    \end{minipage}
 \end{figure}
+\FloatBarrier
 
 \section{Functional Testing Results}
 \label{sec:functional-testing}
@@ -63,22 +74,24 @@ To ensure the system reliability, rigorous functional testing was conducted acro
 \begin{table}[htbp]
 \centering
 \caption{Test Cases for Authentication Module}
-\begin{tabular}{|l|l|p{5cm}|l|l|}
+\begin{tabular}{|l|l|p{4.5cm}|p{4.5cm}|l|}
 \hline
 \textbf{ID} & \textbf{Feature} & \textbf{Test Case Description} & \textbf{Expectation} & \textbf{Result} \\ \hline
 TC-A01 & Registration & User inputs valid email and password format. & Account created, redirect to Login. & \textbf{Pass} \\ \hline
 TC-A02 & Login Success & User logs in with correct credentials. & JWT token issued, redirect to Dashboard. & \textbf{Pass} \\ \hline
 TC-A03 & Login Failure & User inputs incorrect password. & Error message "Invalid credentials". & \textbf{Pass} \\ \hline
-TC-A04 & Forgot PW & User requests password reset for valid email. & OTP sent to email address. & \textbf{Pass} \\ \hline
-TC-A05 & Profile Edit & User updates bio and avatar. & Changes reflected on profile page. & \textbf{Pass} \\ \hline
+TC-A04 & Social Login & User selects "Login with Google/LINE". & Redirects to provider, then dashboard. & \textbf{Pass} \\ \hline
+TC-A05 & Forgot PW & User requests password reset for valid email. & OTP sent to email address. & \textbf{Pass} \\ \hline
+TC-A06 & Profile Edit & User updates bio and avatar. & Changes reflected on profile page. & \textbf{Pass} \\ \hline
 \end{tabular}
 \end{table}
+\FloatBarrier
 
 \subsection{Module 2: Room Management}
 \begin{table}[htbp]
 \centering
 \caption{Test Cases for Room Management}
-\begin{tabular}{|l|l|p{5cm}|l|l|}
+\begin{tabular}{|l|l|p{4.5cm}|p{4.5cm}|l|}
 \hline
 \textbf{ID} & \textbf{Feature} & \textbf{Test Case Description} & \textbf{Expectation} & \textbf{Result} \\ \hline
 TC-R01 & Create Room & Host creates a "General Knowledge" room. & Room saved in DB, visible in list. & \textbf{Pass} \\ \hline
@@ -88,12 +101,14 @@ TC-R04 & Delete Room & Host deletes a room. & Room removed from list and Discove
 TC-R05 & DOCX Import & Upload valid .docx file with questions. & Microservice parses and populates room. & \textbf{Pass} \\ \hline
 \end{tabular}
 \end{table}
+\FloatBarrier
+\clearpage
 
 \subsection{Module 3: Real-time Gameplay}
 \begin{table}[htbp]
 \centering
 \caption{Test Cases for Gameplay Mechanics}
-\begin{tabular}{|l|l|p{5cm}|l|l|}
+\begin{tabular}{|l|l|p{4.5cm}|p{4.5cm}|l|}
 \hline
 \textbf{ID} & \textbf{Feature} & \textbf{Test Case Description} & \textbf{Expectation} & \textbf{Result} \\ \hline
 TC-G01 & Join Room & User enters valid room PIN. & Connected via Socket.io, waiting screen shown. & \textbf{Pass} \\ \hline
@@ -103,12 +118,13 @@ TC-G04 & Leaderboard & Multiple users answer. & Leaderboard updates rankings in 
 TC-G05 & Anti-Cheat & User switches tab during Test Mode. & Event logged in Proctoring Dashboard. & \textbf{Pass} \\ \hline
 \end{tabular}
 \end{table}
+\FloatBarrier
 
 \subsection{Module 4: O2O and Location Features}
 \begin{table}[htbp]
 \centering
 \caption{Test Cases for O2O Features}
-\begin{tabular}{|l|l|p{5cm}|l|l|}
+\begin{tabular}{|l|l|p{4.5cm}|p{4.5cm}|l|}
 \hline
 \textbf{ID} & \textbf{Feature} & \textbf{Test Case Description} & \textbf{Expectation} & \textbf{Result} \\ \hline
 TC-O01 & Discovery & User enables "Nearby" filter. & Returns rooms within 5km radius. & \textbf{Pass} \\ \hline
@@ -117,6 +133,7 @@ TC-O03 & Scan Valid & Host scans valid participant QR. & Success message, vouche
 TC-O04 & Scan Used & Host scans already used QR. & Error "Voucher already redeemed". & \textbf{Pass} \\ \hline
 \end{tabular}
 \end{table}
+\FloatBarrier
 
 \section{Non-Functional Testing Results}
 \label{sec:non-functional-testing}
