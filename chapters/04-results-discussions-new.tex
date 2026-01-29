@@ -160,38 +160,6 @@ TC-O04 & Scan Used & Host scans already used QR. & Error "Voucher already redeem
 \end{table}
 \FloatBarrier
 
-\section{Non-Functional Testing Results}
-\label{sec:non-functional-testing}
-Non-functional testing focused on the system's reliability, code quality, and performance under load, confirming the robustness of the microservice architecture.
-
-\subsection{Backend Unit Testing}
-To ensure the logic integrity of individual components, unit tests were implemented for the backend services using the Jest framework. The tests cover critical paths including user authentication, score calculation algorithms, and database operations.
-% Note: Placeholder for unit test screenshot if available
-The test suite achieved a high level of code coverage for core business logic, ensuring that edge cases in scoring and game state management are handled correctly.
-
-\subsection{System Performance and Load Testing}
-\label{sec:load-testing}
-
-This scenario validates the architectural choices and answers the scalability requirements, examining whether the microservice-based architecture provides the performance required for real-world deployment.
-
-The `/api/discovery/rooms` endpoint and the socket connection handler were subjected to a progressive load test using `k6`, graduating from 1 to 100 concurrent virtual users over a 10-minute period.
-
-\textbf{Key Performance Metrics:}
-\begin{itemize}
-    \item \textbf{Peak Throughput:} The system sustained an average of \textbf{280 Requests Per Second (RPS)} at peak load.
-    \item \textbf{Average Response Time:} The average response time remained under \textbf{300ms} at 100 concurrent users, well within the acceptable range.
-    \item \textbf{Error Rate:} The test completed with a \textbf{0\% error rate}, validating the stability of the Node.js event loop under stress.
-\end{itemize}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.9\textwidth]{figures/load-test-results.png}
-\caption{API Response Time Under Increasing Load}
-\label{fig:load-test-results}
-\end{figure}
-
-These results confirm that the stateless architecture is robust. The ability to handle high concurrency with low latency proves the effectiveness of the chosen tech stack (Node.js/Socket.io) for real-time applications.
-
 \section{Requirement Fulfillment Analysis}
 \label{sec:requirement-fulfillment}
 
@@ -208,7 +176,7 @@ Obj 1 & Design gamified platform with LBS. & \textbf{Completed} & See Section 4.
 Obj 2 & Implement O2O Voucher System. & \textbf{Completed} & Verified in TC-O02, TC-O03. \\ \hline
 Obj 3 & Implement AI Question Generator. & \textbf{Completed} & Verified in TC-R03; Fig \ref{fig:room-ai}. \\ \hline
 Obj 4 & Browser-based Anti-Cheating. & \textbf{Completed} & Verified in TC-G05; Proctoring logs active. \\ \hline
-Obj 5 & Microservice Architecture. & \textbf{Completed} & Verified via Load Test (Sec \ref{sec:load-testing}). \\ \hline
+Obj 5 & Microservice Architecture. & \textbf{Completed} & Verified via System Deployment. \\ \hline
 FR1 & User \& Profile Management. & \textbf{Completed} & TC-A01 to TC-A05. \\ \hline
 FR2 & Content Creation (AI/Docx). & \textbf{Completed} & TC-R01 to TC-R05. \\ \hline
 FR3 & Participant Interaction (Real-time). & \textbf{Completed} & TC-G01 to TC-G04. \\ \hline
