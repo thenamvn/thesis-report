@@ -11,7 +11,7 @@ The requirements for the TEKUTOKO platform were gathered and refined through a m
 \begin{enumerate}
     \item \textbf{Literature Review Analysis:} The comprehensive analysis of academic papers on e-learning, gamification, and online proctoring (as detailed in Chapter \ref{chap:lit-review}) helped identify established best practices and core pedagogical needs. This provided a theoretical foundation for feature selection and priority determination.
     
-    \item \textbf{Competitive Analysis:} A thorough examination of existing platforms (Kahoot!, Quizlet, Google Classroom, and specialized proctoring tools) was conducted to determine market standards, identify common features, and pinpoint opportunities for innovation. Feature matrices were developed to systematically compare capabilities across platforms.
+    \item \textbf{Competitive Analysis:} A thorough examination of existing platforms (Kahoot!, Quizlet, Quizizz/Wayground, and specialized proctoring tools) was conducted to determine market standards, identify common features, and pinpoint opportunities for innovation. Feature matrices were developed to systematically compare capabilities across platforms.
     
     \item \textbf{Stakeholder Needs Analysis:} Potential end-users, including educators and students, were consulted to understand their primary pain points with current systems. Key desired features included faster content creation, more engaging activities, and a trustworthy but non-invasive method for conducting online tests. Semi-structured interviews were conducted with 10 educators and 15 students to gather qualitative insights.
     
@@ -194,7 +194,7 @@ The main components are the React frontend, a core Node.js backend API, a specia
 
     \item \textbf{Backend (Node.js/Express):} The central nervous system of the platform. Its responsibilities include providing RESTful API endpoints, managing JWT-based authentication, handling business logic for all core features, and orchestrating calls to other services.
 
-    \item \textbf{Python Microservice (FastAPI/Flask):} A specialized service responsible for the complex task of processing `.docx` files. Its sole purpose is to accept a document, extract questions, options, and images, and convert them into a structured JSON format ready for serving. It orchestrates external command-line tools like \textbf{Pandoc} for document structure conversion and \textbf{ImageMagick} for image format transcoding (e.g., WMF/EMF to WebP). The processed output is stored in a static directory, served via HTTP, and its metadata is recorded in the database.
+    \item \textbf{Backend (Microservice) (Python / FastAPI):} A specialized service responsible for the complex task of processing `.docx` files. Its sole purpose is to accept a document, extract questions, options, and images, and convert them into a structured JSON format ready for serving. It orchestrates external command-line tools like \textbf{Pandoc} for document structure conversion and \textbf{ImageMagick} for image format transcoding (e.g., WMF/EMF to WebP). The processed output is stored in a shared persistent volume (PV) accessible via HTTP, and its metadata is recorded in the database.
 
     \item \textbf{MySQL Database:} A relational database for all structured, persistent data. This includes user accounts, room configurations, questions, submissions, reward vouchers, and proctoring logs. The relational model ensures data integrity.
 
@@ -867,9 +867,8 @@ A scalable and secure cloud storage solution that simplifies file uploads and ma
 \textbf{AI Service} & \textbf{Google Gemini API} &
 A state-of-the-art large language model used for the AI Question Generator, capable of understanding complex prompts and producing high-quality, structured JSON output \citep{gemini2023}. \\[0.5em]
 
-\textbf{Deployment} & \textbf{Vercel, Docker} &
-Vercel provides seamless CI/CD and optimized hosting for the React frontend.
-Docker is used to containerize the backend services for consistent, portable deployment. \\[0.5em]
+\textbf{Deployment} & \textbf{Kubernetes (K8s), Docker} &
+Docker containers package all services, while a Kubernetes cluster orchestrates deployment, scaling, and networking (Ingress), ensuring high availability and robust resource management. \\[0.5em]
 
 \end{longtable}
 
