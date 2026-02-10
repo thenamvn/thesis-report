@@ -1,108 +1,81 @@
 \section{DevOps and Deployment Strategy}
 \label{sec:devops-strategy}
 
-The transition from a monolithic development environment to a distributed microservice architecture necessitates a robust DevOps strategy. As defined by \citet{kim2016}, DevOps is not merely a set of tools but a culture and practice that aims to shorten the systems development life cycle while delivering features, fixes, and updates frequently in close alignment with business objectives. For the TEKUTOKO platform, a container-centric deployment strategy orchestrated by Kubernetes (K8s) was selected to ensure high availability, scalability, and maintainability \citep{burns2019}. This section details the architectural decisions and implementation specifics of the deployment pipeline.
+The transition from a monolithic development environment to a distributed microservice architecture necessitates a robust DevOps strategy. As defined by \citet{kim2016}, DevOps is not merely a set of tools but a culture that aims to shorten the systems development life cycle. For the TEKUTOKO platform, the architecture was split into three distinct services to ensure scalability:
+\begin{enumerate}
+    \item \textbf{docx-processor:} A Python FastAPI microservice for heavy document processing.
+    \item \textbf{tekutoko-server:} A Node.js Express backend acting as the main API and authentication handler.
+    \item \textbf{tekutoko-client:} A ReactJS frontend application served via Nginx.
+\end{enumerate}
 
-\subsection{Containerization with Docker}
+This section details the containerization challenges, the Kubernetes orchestration on AWS EKS, and the architectural decisions made during the deployment pipeline.
+
+\subsection{Phase 1: Advanced Containerization Strategy}
 \label{subsec:containerization}
 
-To achieve environment consistency across development, testing, and production, the platform utilizes Operating-system-level virtualization, commonly known as containerization \citep{merkel2014}.
+To achieve environment consistency detailed by \citet{merkel2014}, specific Docker strategies were employed to resolve language-specific challenges found during the development phase.
 
-\subsubsection{Rationale for Containerization}
-Unlike traditional Virtual Machines (VMs) which emulate hardware and require a full guest operating system, containers share the host system's kernel while isolating processes in user space. This results in significantly lower overhead, faster startup times, and greater portability detailed in Table \ref{tab:vm-vs-container}.
+\subsubsection{Python Microservice: Solving Dependency Hell}
+The \texttt{docx-processor} service required system-level binaries (\texttt{pandoc}, \texttt{imagemagick}) that differed significantly between developer environments (Windows) and production (Linux). A critical issue encountered was the default security policy of ImageMagick 7 blocking PDF conversions.
 
-\begin{table}[htbp]
-\centering
-\caption{Comparison of Virtual Infrastructure Approaches}
-\label{tab:vm-vs-container}
-\begin{tabular}{p{4cm} p{5cm} p{5cm}}
-\toprule
-\textbf{Feature} & \textbf{Virtual Machines} & \textbf{Docker Containers} \\
-\midrule
-\textbf{Isolation} & Hardware-level (Hypervisor) & OS-level (Namespaces/Cgroups) \\
-\textbf{Size} & Large (GBs) & Small (MBs) \\
-\textbf{Startup Time} & Minutes & Milliseconds/Seconds \\
-\textbf{Dependencies} & Manually managed per VM & Encapsulated in Image \\
-\bottomrule
-\end{tabular}
-\end{table}
+The solution involved a custom logic in the \texttt{Dockerfile} to detect and patch the policy XML dynamically:
 
-\subsubsection{Implementation Details}
-Crucially for this project, containerization solves the "dependency hell" problem inherent in the Python document processing microservice. This service requires specific versions of system-level binaries—\texttt{pandoc} for LaTeX conversion and \texttt{imagemagick} for media processing—which are difficult to manage consistently across different developer machines (Windows/macOS) and production servers (Linux).
-
-A custom \texttt{Dockerfile} was engineered for the Python service to encapsulate these dependencies:
-
-\begin{lstlisting}[language=bash, caption={Snippet of Python Microservice Dockerfile}, label={lst:dockerfile}]
-# Use python:3.9-slim for reduced image size
-FROM python:3.9-slim
-
-# Install system-level dependencies for document processing
-RUN apt-get update && apt-get install -y \
-    pandoc \
-    imagemagick \
-    && rm -rf /var/lib/apt/lists/*
-
-# Relax ImageMagick security policy to allow PDF/DOCX processing
-RUN sed -i 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/' \
-    /etc/ImageMagick-6/policy.xml
-
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+\begin{lstlisting}[language=bash, caption={Fixing ImageMagick Policy in Docker}, label={lst:docker-python-fix}]
+# Update ImageMagick policy to allow PDF conversion 
+# (Compatible with both ImageMagick 6 and 7)
+RUN if [ -f /etc/ImageMagick-6/policy.xml ]; then \
+    sed -i 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/' \
+    /etc/ImageMagick-6/policy.xml; \
+fi
 \end{lstlisting}
 
-\subsection{Orchestration with Kubernetes}
+\subsubsection{Node.js Server: Dependency Isolation}
+Initially, the project utilized a monorepo structure where the Frontend and Backend shared a single `package.json`, causing dependency conflicts during the build process. To isolate the environments, the backend dependencies were extracted into a dedicated `server/package.json`. Docker build contexts were adjusted to pull only essential server-side code, reducing the image size and build time.
+
+\subsubsection{React Client: Multi-stage Building}
+For the frontend, a \textbf{Multi-stage Build} strategy was implemented to separate the build environment from the runtime environment.
+\begin{itemize}
+    \item \textbf{Stage 1 (Builder):} Uses `node:20-alpine` to compile React code into static HTML/CSS/JS.
+    \item \textbf{Stage 2 (Runtime):} Uses lightweight `nginx:alpine` to serve the static files.
+\end{itemize}
+
+This approach reduced the final image size from $>$500MB (Node modules included) to $<$20MB (Nginx + Static files).
+
+\subsection{Phase 2: Kubernetes Orchestration (AWS EKS)}
 \label{subsec:kubernetes}
 
-While Docker manages individual containers, a production microservice system requires a higher-level orchestrator to manage lifecycle, networking, and scaling. Kubernetes (K8s) was selected over simpler solutions like Docker Compose for its robust capabilities in state management and self-healing.
+Moving from local testing (Minikube) to production, the system was deployed on \textbf{Amazon Elastic Kubernetes Service (EKS)} using `t3.small` nodes to balance cost and performance.
 
-\subsubsection{Cluster Architecture and Topology}
-The Kubernetes cluster is designed following a modular topology where services are exposed through a unified Ingress Controller. The architecture ensures that internal services (Database, Python Microservice) are not directly exposed to the public internet, reducing the attack surface.
+\subsubsection{Cluster Topology and Service Discovery}
+A key architectural decision was the routing flow. Unlike traditional n-tier architectures where the Client only talks to the Backend, the TEKUTOKO client communicates directly with both the Node.js Server (for Auth/User) and the Python Service (for Quiz/Docx generation).
 
-The deployed topology is illustrated in Figure \ref{fig:k8s-architecture}.
+To manage this, an \textbf{AWS Load Balancer Controller} (ALB) or \textbf{Nginx Ingress Controller} is strictly required to route traffic based on URL paths:
+
+\begin{itemize}
+    \item \texttt{/api/v1/*} $\rightarrow$ Routed to \texttt{docx-processor-svc} (Python).
+    \item \texttt{/backend/*} or \texttt{/api/*} $\rightarrow$ Routed to \texttt{tekutoko-server-svc} (Node.js).
+    \item \texttt{/*} $\rightarrow$ Routed to \texttt{tekutoko-client-svc} (React).
+\end{itemize}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/k8s-architecture.png}
-\caption{Kubernetes Cluster Topology and Traffic Flow}
+\caption{Kubernetes Cluster Topology on AWS EKS}
 \label{fig:k8s-architecture}
 \end{figure}
-\FloatBarrier
 
-\subsubsection{Resource Organization and Manifests}
-The deployment configuration follows the Infrastructure as Code (IaC) paradigm, stored in a structured \texttt{k8s/} directory within the project repository. This structure separates configuration concerns:
-
-\begin{lstlisting}[language=bash, caption={Kubernetes Manifest Directory Structure}]
-k8s/
-|-- 00-config/        # ConfigMaps and Secrets (Credentials)
-|-- 01-database/      # MySQL StatefulSet and PVCs
-|-- 02-python-app/    # Document Processing Microservice
-|-- 03-node-app/      # Main API Backend
-|-- 04-frontend/      # React Client Application
-`-- 05-ingress/       # Ingress Routing Rules
-\end{lstlisting}
-
-\subsubsection{Service Discovery and Networking}
-A critical challenge in microservice architecture is service discovery—how the Node.js backend locates the Python microservice without hardcoded IP addresses (which change dynamically in K8s).
-
-To solve this, Kubernetes \textbf{Services} are employed. A Service defines a logical set of Pods and a policy by which to access them.
-\begin{enumerate}
-    \item \textbf{Internal DNS:} The core backend connects to the database via the hostname \texttt{mysql-service} and to the docx-processor via \texttt{python-backend-service}. Kubernetes' internal DNS resolver automatically routes these hostnames to the correct ClusterIP.
-    \item \textbf{Ingress Routing:} An Nginx Ingress Controller handles Layer 7 (HTTP) routing, directing external traffic based on URL paths:
-    \begin{itemize}
-        \item \texttt{/api/*} $\rightarrow$ Node.js Backend (Port 3000)
-        \item \texttt{/python-api/*} $\rightarrow$ Python Service (Port 8000)
-        \item \texttt{/*} $\rightarrow$ Frontend Service (Port 80)
-    \end{itemize}
-\end{enumerate}
-
-\subsubsection{State Management and Persistence}
-Although the application logic is stateless \citep{newman2021}, data persistence is critical. \textbf{PersistentVolumeClaims (PVCs)} constitute the mechanism used to abstract storage provisioning:
+\subsubsection{Storage Management on Cloud}
+While local deployments (Minikube) use standard storage classes, deploying on AWS required the installation of the \textbf{EBS CSI Driver}.
 \begin{itemize}
-    \item \textbf{Database Persistence:} A 5Gi PVC attached to the MySQL Deployment ensures user data is preserved even if the database container crashes or restarts.
-    \item \textbf{Processing Workspace:} The Python microservice mounts a 2Gi PVC at \texttt{/app/outputs}. This shared workspace simplifies the processing pipeline, allowing the service to extract heavy media files from DOCX archives to disk without consuming the container's ephemeral memory, preventing \textit{Out Of Memory (OOM)} errors during high load.
+    \item \textbf{Challenge:} The Python service requires a shared workspace to unpack generic DOCX files before processing.
+    \item \textbf{Solution:} A `PersistentVolumeClaim` (PVC) using the `gp3` storage class was configured to mount to `/app/outputs`. This ensures that even if pods restart during auto-scaling, the processed file cache remains available.
+\end{itemize}
+
+\subsubsection{Secret Management Strategy}
+To secure sensitive credentials (database passwords, Gemini API keys), a "Template vs. Real" strategy was adopted:
+\begin{itemize}
+    \item \texttt{secrets.template.yaml}: Committed to Git, containing placeholders.
+    \item \texttt{secrets.yaml}: Configured directly on the cluster or CI/CD runner, never committed.
 \end{itemize}
 
 \subsection{Continuous Deployment Pipeline}
@@ -116,19 +89,8 @@ A GitOps-based workflow automates the deployment process. The CI/CD pipeline, vi
 \caption{Automated CI/CD Pipeline Workflow}
 \label{fig:cicd-pipeline}
 \end{figure}
-\FloatBarrier
 
-Upon a commit to the \texttt{main} branch:
-\begin{enumerate}
-    \item \textbf{CI Phase:} GitHub Actions runners execute unit tests and linter checks to verify code integrity.
-    \item \textbf{Build Phase:} Docker images are built for each service, tagged with the commit SHA (e.g., \texttt{docx-processor:a1b2c3d}), and pushed to the container registry.
-    \item \textbf{CD Phase:} The pipeline authenticates with the Kubernetes cluster and updates the Deployment images:
-    \begin{verbatim}
-    kubectl set image deployment/docx-processor-deploy \
-        docx-processor=registry/docx-processor:a1b2c3d
-    \end{verbatim}
-    \item \textbf{Rolling Update:} Kubernetes performs a rolling update, incrementally replacing old Pods with new ones, ensuring zero downtime for users.
-\end{enumerate}
+Upon a commit to the \texttt{main} branch, GitHub Actions triggers the build process, pushes tagged images to \textbf{Amazon ECR (Elastic Container Registry)}, and updates the EKS Deployment manifests.
 
 \section{System Security Assurance and Testing}
 \label{sec:system-security}
@@ -210,7 +172,7 @@ app.disable('x-powered-by'); // Obfuscate Server technology information
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth]{figures/zap-backend-after.png}
+\includegraphics[width=0.65\textwidth]{figures/zap-backend-after.png}
 \caption{OWASP ZAP Results for Backend API After Hardening (Clean State)}
 \label{fig:zap-backend-after}
 \end{figure}
@@ -221,7 +183,7 @@ In the development environment (\texttt{npm start}), the ReactJS interface recor
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.8\textwidth]{figures/zap-frontend-before.png}
+\includegraphics[width=0.65\textwidth]{figures/zap-frontend-before.png}
 \caption{OWASP ZAP Results for Frontend Before Hardening (11 Alerts)}
 \label{fig:zap-frontend-before}
 \end{figure}
@@ -247,7 +209,7 @@ add_header Content-Security-Policy "default-src 'self';
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth]{figures/zap-frontend-after.png}
+\includegraphics[width=0.6\textwidth]{figures/zap-frontend-after.png}
 \caption{OWASP ZAP Results for Frontend After Hardening (Reduced to 7 Low/Medium Alerts)}
 \label{fig:zap-frontend-after}
 \end{figure}
@@ -335,6 +297,3 @@ This configuration allows the Frontend (ReactJS) to maintain a simple environmen
 const API_URL = "/api";
 export default API_URL;
 \end{lstlisting}
-
-\subsection*{Chapter Conclusion}
-By combining Static Software Composition Analysis (SCA) and Dynamic Application Security Testing (DAST), the team successfully established a closed-loop security process for the Fullstack application. Practical scanning results demonstrate that the system has been solidly reinforced at both the Application layer (NodeJS) and the Server layer (Web Server configuration), ensuring safety for data and users prior to official deployment.
