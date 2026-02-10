@@ -37,6 +37,15 @@
 \usetikzlibrary{calc} % Thư viện hỗ trợ tính toán tọa độ cho khung
 \newcolumntype{P}[1]{>{\RaggedRight\arraybackslash}p{#1}}
 
+% =================== CHAPTER TITLE FORMATTING ===================
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]
+  {\normalfont\fontsize{14pt}{17pt}\bfseries\centering}
+  {\MakeUppercase{\chaptertitlename\ \thechapter}}
+  {1em}
+  {\MakeUppercase}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+
 \lstdefinelanguage{JSON}{
 	basicstyle=\ttfamily\small,
 	numbers=left,
@@ -124,8 +133,7 @@
 \title{
 	\vspace{-3cm}
 	\includegraphics[width=4cm]{figures/vju-logo.png} \\[1cm]
-	\textbf{TEKUTOKO: A Microservice-Based Gamified E-Learning Platform\\
-		with AI-Driven Content Generation and Integrated Proctoring}
+	\textbf{Design and Implementation of an Interactive Quiz Management System for Multi-Purpose Event Hosting}
 }
 \author{
 	\textbf{NGUYEN THE NAM} \\[0.3cm]
@@ -166,7 +174,7 @@
         \vspace{3.5cm}
         
         % Tên đề tài (Times New Roman, 18pt, bold)
-        {\fontsize{18pt}{22pt}\selectfont \textbf{TEKUTOKO: A MICROSERVICE-BASED GAMIFIED E-LEARNING PLATFORM WITH AI-DRIVEN CONTENT GENERATION AND INTEGRATED PROCTORING}\par}
+        {\fontsize{18pt}{22pt}\selectfont \textbf{Design and Implementation of an Interactive Quiz Management System for Multi-Purpose Event Hosting}\par}
         
         \vfill
         
@@ -207,7 +215,7 @@
         \vspace{3cm}
         
         % Tên đề tài
-        {\fontsize{18pt}{22pt}\selectfont \textbf{TEKUTOKO: A MICROSERVICE-BASED GAMIFIED E-LEARNING PLATFORM WITH AI-DRIVEN CONTENT GENERATION AND INTEGRATED PROCTORING}\par}
+        {\fontsize{18pt}{22pt}\selectfont \textbf{Design and Implementation of an Interactive Quiz Management System for Multi-Purpose Event Hosting}\par}
         
         \vspace{2cm}
         
@@ -219,7 +227,10 @@
         \vfill
         
         % Supervisor Info
-        {\fontsize{14pt}{17pt}\selectfont \textbf{Supervisor: Dr. Nguyen Van Tinh}\par}
+        {\fontsize{14pt}{17pt}\selectfont 
+            \textbf{Supervisor: \makebox[3cm][l]{Dr. Nguyen Van Tinh}}\\[0.3cm]
+            \textbf{\phantom{Supervisor: }\makebox[3cm][l]{Dr. Nguyen Hoang Oanh}}
+        \par}
         
         \vspace{2cm}
         
@@ -233,11 +244,6 @@
 	
 	% ======= FRONT MATTER =======
 	\include{chapters/00-preface}       % (Lời cảm ơn hoặc abstract)
-	\cleardoublepage
-	
-	\tableofcontents
-	\listoffigures
-	\listoftables
 	\cleardoublepage
 	
 	% ======= MAIN CONTENT =======
