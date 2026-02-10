@@ -234,7 +234,9 @@ The team proposed a security solution at the Web Server layer (Nginx) or Product
 \begin{lstlisting}[language=bash, caption={Nginx Security Headers Configuration}, label={lst:nginx-sec}]
 add_header X-Frame-Options "SAMEORIGIN";
 add_header X-Content-Type-Options "nosniff";
-add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';";
+add_header Content-Security-Policy "default-src 'self'; 
+    script-src 'self' 'unsafe-inline'; 
+    style-src 'self' 'unsafe-inline';";
 \end{lstlisting}
 
 \textbf{Result:} After configuration optimization, the alert count decreased from 11 down to 7; errors regarding Clickjacking and Transport Layer Security were resolved.
