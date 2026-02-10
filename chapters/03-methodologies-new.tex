@@ -785,8 +785,17 @@ The anti-cheat system represents a pragmatic, privacy-conscious approach to main
 
 \subsubsection{Authentication and Security}
 \begin{itemize}
-    \item \textbf{JWT-Based Authentication:} The system uses JSON Web Tokens for stateless authentication. After a successful login, the client receives an access token which is sent in the `Authorization` header of subsequent requests. The flow is visualized in Figure \ref{fig:jwt-flow}.
-    \item \textbf{Password Security:} User passwords are never stored in plaintext. They are hashed using the `bcrypt` algorithm with a salt.
+    \item \textbf{JWT-Based Authentication:} The system uses JSON Web Tokens (JWT) for stateless authentication. After a successful login, the client receives an access token which is sent in the `Authorization` header of subsequent requests. The flow is visualized in Figure \ref{fig:jwt-flow}.
+    
+    \item \textbf{Password Encryption:} User passwords are never stored in plaintext. They are hashed using the \texttt{bcrypt} algorithm with a work factor (salt rounds) of 10. This ensures that even if the database is compromised, the original passwords remain protected against rainbow table and brute-force attacks.
+
+    \item \textbf{OTP Security:} One-Time Passwords (OTPs) used for email verification and password resets are generated using a cryptographically secure random number generator. To prevent abuse, OTPs are: 
+    \begin{itemize}
+        \item \textbf{Time-bound:} Valid for only 5 minutes.
+        \item \textbf{Single-use:} Invalidated immediately after successful verification.
+        \item \textbf{Rate-limited:} Requests are throttled to prevent spamming.
+    \end{itemize}
+
     \item \textbf{Voucher Security:} Each voucher is tied to a unique, cryptographically random string. The `is_redeemed` flag provides replay protection, ensuring a voucher can only be used once.
 \end{itemize}
 
@@ -908,5 +917,6 @@ Key implementation strategies employed include:
     
     \item \textbf{Human-in-the-Loop AI:} AI-generated content always requires human review before being made available to learners, ensuring quality and accuracy.
 \end{itemize}
-\input{chapters/devops-deployment}
 \input{chapters/03-testing-methodology}
+\input{chapters/devops-deployment}       
+
