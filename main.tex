@@ -48,6 +48,27 @@
   {\MakeUppercase}
 \titlespacing*{\chapter}{0pt}{-20pt}{20pt}
 
+% Section formatting (1.1, 1.2...)
+\titleformat{\section}
+  {\normalfont\fontsize{13pt}{15.6pt}\bfseries}
+  {\thesection}
+  {1em}
+  {}
+
+% Subsection formatting (1.1.1, 1.1.2...)
+\titleformat{\subsection}
+  {\normalfont\fontsize{12pt}{14.4pt}\bfseries}
+  {\thesubsection}
+  {1em}
+  {}
+
+% Subsubsection formatting
+\titleformat{\subsubsection}
+  {\normalfont\fontsize{12pt}{14.4pt}\itshape}
+  {\thesubsubsection}
+  {1em}
+  {}
+
 \lstdefinelanguage{JSON}{
 	basicstyle=\ttfamily\small,
 	numbers=left,
