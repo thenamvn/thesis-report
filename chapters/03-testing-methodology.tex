@@ -1,0 +1,33 @@
+\section{Testing and Evaluation Methodology}
+\label{sec:testing-methodology}
+
+To validate that the system meets the functional (FR) and non-functional requirements (NFR) defined in Section \ref{sec:requirements-engineering}, as well as to answer the research questions, a structured testing evaluation strategy was implemented. Given the scope of this implementation-focused thesis, the evaluation methodology prioritizes \textbf{Functional Verification} and \textbf{System Requirement Fulfillment}, ensuring the final product operates correctly according to the design.
+
+\subsection{System Verification Approach}
+The first layer of evaluation involves verifying that the deployed system aligns with the architectural design and user interface specifications. This process is conducted through visual inspection and interaction with the deployed application (visualized in Section \ref{sec:system-overview}). The goal is to confirm that:
+\begin{itemize}
+    \item The critical user flows (Login $\rightarrow$ Dashboard $\rightarrow$ Room Creation $\rightarrow$ Gameplay) are seamless.
+    \item The User Interface (UI) is responsive and consistent with the design mockups.
+    \item The integration of key external services (Google OAuth, Gemini AI, Google Maps API) functions correctly within the UI.
+\end{itemize}
+
+\subsection{Functional Testing Strategy (Black-box Testing)}
+To formally verify the system logic, a \textbf{Black-box Testing} methodology was adopted. This approach focuses on testing the software's functionality without peering into its internal structures or specific coding implementation.
+
+\subsubsection{Test Case Design}
+Test Cases (TC) were designed to cover all primary modules of the system. Each test case is defined with specific input data, pre-conditions (e.g., User is logged in), and the expected output defined by the requirements. The testing scope matches the four core modules presented in the results chapter:
+
+\begin{enumerate}
+    \item \textbf{Authentication \& Profile (Module 1):} Verifying secure access, social login integrations, and user identity management.
+    \item \textbf{Room Management (Module 2):} Verifying the CRUD operations for rooms and the integration of the AI Question Generator logic.
+    \item \textbf{Real-time Gameplay (Module 3):} Verifying real-time socket events, scoring logic, leaderboard updates, and the browser-based anti-cheat triggers.
+    \item \textbf{O2O Features (Module 4):} Verifying the location-based service filtering and QR code voucher redemption flow.
+\end{enumerate}
+
+\subsection{Requirement Fulfillment Analysis Method}
+The final stage of evaluation involves a traceability analysis. This method maps the proven results (from Functional Testing) back to the initial:
+\begin{itemize}
+    \item \textbf{Research Objectives (Obj):} To ensure the project goals were achieved.
+    \item \textbf{Functional Requirements (FR):} To confirm the software specification was fully implemented.
+\end{itemize}
+This analysis serves as the concluding evidence of the project's completion status.
