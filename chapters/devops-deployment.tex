@@ -69,6 +69,7 @@ The deployed topology is illustrated in Figure \ref{fig:k8s-architecture}.
 \caption{Kubernetes Cluster Topology and Traffic Flow}
 \label{fig:k8s-architecture}
 \end{figure}
+\FloatBarrier
 
 \subsubsection{Resource Organization and Manifests}
 The deployment configuration follows the Infrastructure as Code (IaC) paradigm, stored in a structured \texttt{k8s/} directory within the project repository. This structure separates configuration concerns:
@@ -115,6 +116,7 @@ A GitOps-based workflow automates the deployment process. The CI/CD pipeline, vi
 \caption{Automated CI/CD Pipeline Workflow}
 \label{fig:cicd-pipeline}
 \end{figure}
+\FloatBarrier
 
 Upon a commit to the \texttt{main} branch:
 \begin{enumerate}
@@ -194,6 +196,7 @@ Scanning the API URL at port 9999 using OWASP ZAP revealed initial errors includ
 \caption{OWASP ZAP Results for Backend API Before Hardening (Missing Headers)}
 \label{fig:zap-backend-before}
 \end{figure}
+\FloatBarrier
 
 \textbf{Remediation Solution:} Integrated \textbf{Helmet Middleware} into the ExpressJS source code to harden headers.
 
@@ -218,10 +221,11 @@ In the development environment (\texttt{npm start}), the ReactJS interface recor
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth]{figures/zap-frontend-before.png}
+\includegraphics[width=0.8\textwidth]{figures/zap-frontend-before.png}
 \caption{OWASP ZAP Results for Frontend Before Hardening (11 Alerts)}
 \label{fig:zap-frontend-before}
 \end{figure}
+\FloatBarrier
 
 \textbf{Remediation Solution (Real-world Deployment Model):}
 The team proposed a security solution at the Web Server layer (Nginx) or Production Server configuration when packaging the application. Instead of utilizing the development server, the team performed:
