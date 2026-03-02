@@ -75,172 +75,58 @@ The findings of this research have several important implications for the future
 \section{Future Work}
 \label{sec:future-work}
 
-While TEKUTOKO successfully demonstrates the integration of modern technologies in educational platforms, numerous opportunities exist for extending and enhancing the system. The following sections outline promising directions for future research and development.
+While TEKUTOKO successfully demonstrates the integration of modern technologies in educational platforms, several concrete directions for future research and development have been identified based on the evaluation results and the limitations discussed above.
 
-\subsection{Adaptive Learning and Personalization}
+\subsection{AI-Enhanced Proctoring and Behavioral Analysis}
 
-The current AI module generates questions based on topics and difficulty levels specified by educators. A natural extension would be to implement adaptive learning algorithms that dynamically adjust content difficulty based on individual learner performance.
-
-\textbf{Proposed Enhancements:}
-\begin{itemize}
-    \item \textbf{Performance-Based Difficulty Scaling:} Analyze user responses in real-time to identify their current mastery level. If a learner consistently answers questions correctly, the system would automatically increase difficulty; if they struggle, it would provide easier questions to build confidence and foundational knowledge.
-    
-    \item \textbf{Knowledge Gap Identification:} Use item response theory (IRT) or knowledge tracing algorithms to identify specific concepts where learners struggle, then generate targeted questions to address those gaps.
-    
-    \item \textbf{Learning Style Adaptation:} Extend the AI to generate different question formats (visual, textual, scenario-based) based on learner preferences and performance patterns, accommodating diverse learning styles.
-    
-    \item \textbf{Personalized Learning Paths:} Create individualized sequences of learning activities that guide each learner through content at their own pace and in an order optimized for their understanding.
-\end{itemize}
-
-\textbf{Research Questions:}
-\begin{itemize}
-    \item How does adaptive difficulty scaling impact learning outcomes and engagement compared to static difficulty levels?
-    \item Can AI-driven personalization effectively accommodate diverse learning styles and preferences?
-    \item What is the optimal balance between algorithm-driven adaptation and learner agency in choosing their path?
-\end{itemize}
-
-\subsection{Advanced Gamification Mechanics}
-
-The current gamification implementation includes leaderboards, rewards, and location-based discovery. Future work could introduce more sophisticated game mechanics to deepen engagement.
+The current browser-based proctoring system detects explicit actions (tab switching, DevTools opening, copy attempts) with high accuracy (98.2\%). However, it cannot detect more subtle forms of dishonesty. Future work should explore AI-driven monitoring techniques that maintain the platform's commitment to privacy-respecting design.
 
 \textbf{Proposed Enhancements:}
 \begin{itemize}
-    \item \textbf{Narrative-Driven Learning Missions:} Develop story-based learning experiences where students progress through narrative arcs by completing educational challenges. For example, a cybersecurity course could be framed as a "cyber detective" story where solving security puzzles advances the plot.
+    \item \textbf{Keystroke Dynamics Analysis:} Analyze typing patterns (inter-key intervals, hold times, flight times) to build a behavioral profile for each student. Anomalies in typing rhythm during an exam may indicate that a different person is taking the test. Unlike webcam-based verification, keystroke dynamics operate on data already captured by the browser's native event listeners, requiring no additional hardware access.
     
-    \item \textbf{Achievement and Badge Systems:} Implement a comprehensive achievement system with unlockable badges for various accomplishments (mastery of topics, consistency, helping peers, creative answers). Research shows that well-designed achievement systems can sustain long-term motivation.
+    \item \textbf{Answer Pattern Analysis:} Apply statistical techniques (e.g., response time modeling, Guttman error analysis) to identify improbable answer patterns. For example, consistently answering complex questions in under 3 seconds may indicate access to an external answer source.
     
-    \item \textbf{Collaborative Team Challenges:} Enable team-based missions where groups of learners must collaborate to solve complex, multi-part problems. This would address the "relatedness" dimension of Self-Determination Theory more deeply than current competitive features.
-    
-    \item \textbf{Customizable Avatars and Profiles:} Allow learners to customize their profiles with cosmetic items earned through achievement, creating opportunities for self-expression and identity formation within the learning community.
-    
-    \item \textbf{Boss Battles and Milestone Challenges:} Implement periodic "boss battle" assessments that test cumulative knowledge and offer special rewards, creating memorable high-stakes moments that punctuate the learning journey.
+    \item \textbf{Optional Webcam Integration:} For high-stakes assessments where stronger guarantees are required, provide an opt-in webcam module that uses lightweight Computer Vision models (e.g., face detection via MediaPipe) to verify student presence without recording or transmitting video streams. The analysis would run entirely client-side using WebAssembly, preserving privacy.
 \end{itemize}
 
-\textbf{Research Questions:}
-\begin{itemize}
-    \item Do narrative-driven missions lead to better knowledge retention than abstract question sets?
-    \item How do different gamification elements interact—do some combinations amplify motivation while others conflict?
-    \item Can gamification sustain engagement over long-term use (months, semesters) or do novelty effects dominate?
-\end{itemize}
+\subsection{Scalable Search and Discovery with Elasticsearch}
 
-\subsection{Expanded AI Capabilities}
-
-Current AI functionality focuses on question generation. Numerous opportunities exist to expand AI integration across other educational tasks.
+The current ``Nearby'' room discovery feature relies on SQL-based geospatial queries (\texttt{ST\_Distance\_Sphere} in MySQL). While adequate for the current scale, this approach will encounter performance bottlenecks as the platform grows to tens of thousands of rooms and users.
 
 \textbf{Proposed Enhancements:}
 \begin{itemize}
-    \item \textbf{Automated Hint Generation:} When learners struggle with questions, the AI could generate progressive hints that guide them toward the answer without giving it away directly, promoting productive struggle and deeper learning.
+    \item \textbf{Elasticsearch Integration:} Migrate geospatial queries to Elasticsearch, which provides native support for \texttt{geo\_point} fields and optimized spatial indexing (BKD trees). This would enable sub-millisecond geospatial searches even at scale, supporting features such as real-time proximity notifications.
     
-    \item \textbf{Intelligent Feedback and Explanations:} For incorrect answers, generate detailed explanations that address common misconceptions and provide additional context, creating a tutoring-like experience.
+    \item \textbf{Full-Text Search:} Beyond location, Elasticsearch would enable fuzzy full-text search across room titles, descriptions, question content, and host profiles, significantly improving content discoverability.
     
-    \item \textbf{Document Summarization and Study Guides:} Extend the DOCX processing pipeline to automatically generate summaries, key concept lists, and study guides from uploaded course materials, further reducing educator workload.
-    
-    \item \textbf{Learning Objective Mapping:} Use AI to automatically map questions to specific learning objectives or educational standards, helping educators ensure comprehensive coverage of curriculum requirements.
-    
-    \item \textbf{Multimodal Content Generation:} Extend beyond text to generate visual content (diagrams, charts) or even video explanations using emerging multimodal AI models.
+    \item \textbf{Recommendation Engine:} Leverage Elasticsearch's aggregation capabilities combined with user interaction data to build a content recommendation system that suggests rooms based on a user's topic interests, past performance, and social connections.
 \end{itemize}
 
-\textbf{Research Questions:}
-\begin{itemize}
-    \item How does AI-generated feedback compare to human educator feedback in terms of learning impact?
-    \item Can AI reliably map content to educational standards, or does this require domain expertise?
-    \item What quality control mechanisms are needed for more complex AI-generated content like explanations and study guides?
-\end{itemize}
+\subsection{Blockchain-Based Voucher Verification for O2O Trust}
 
-\subsection{Enhanced Analytics and Insights}
-
-The current platform provides basic results dashboards for educators. Future work could develop sophisticated learning analytics capabilities.
+The current QR-based voucher system relies on the backend database as the single source of truth for voucher validity. While functional, this centralized approach presents potential trust issues in commercial O2O scenarios where third-party businesses are involved.
 
 \textbf{Proposed Enhancements:}
 \begin{itemize}
-    \item \textbf{Question Difficulty Analysis:} Automatically analyze which questions are most frequently answered incorrectly, identify problematic questions (too easy, too hard, ambiguous), and suggest improvements.
+    \item \textbf{Lightweight NFT Vouchers:} Issue vouchers as Non-Fungible Tokens (NFTs) on a low-cost, energy-efficient blockchain (e.g., Polygon or Solana). Each voucher's creation, ownership, and redemption status would be recorded immutably on-chain, providing transparent and tamper-proof verification.
     
-    \item \textbf{Common Misconception Detection:} Use pattern analysis on incorrect answers to identify common misconceptions among learners, helping educators target instruction more effectively.
+    \item \textbf{Smart Contract Automation:} Deploy smart contracts that automatically mint voucher NFTs when quiz completion criteria are met and burn them upon redemption, eliminating the possibility of double-spending or forgery.
     
-    \item \textbf{Engagement Pattern Visualization:} Provide educators with visualizations of student engagement over time, identifying at-risk students who show declining participation or performance.
-    
-    \item \textbf{Peer Comparison and Benchmarking:} Allow educators to see how their students' performance compares to anonymized aggregates from other classes or institutions, providing context for assessment results.
-    
-    \item \textbf{Predictive Analytics:} Use machine learning to predict which students are at risk of poor performance or disengagement based on early indicators, enabling proactive intervention.
-
-    \item \textbf{O2O Conversion Tracking:} For the "Online-to-Offline" model where hosts (e.g., local businesses) offer physical rewards, specific analytics could track the conversion funnel from digital participation to real-world store visits and voucher redemption, providing tangible ROI metrics for gamification hosts.
+    \item \textbf{Cross-Platform Interoperability:} Blockchain-based vouchers could be recognized across multiple platforms and businesses, enabling a broader reward ecosystem beyond TEKUTOKO's own infrastructure.
 \end{itemize}
 
-\textbf{Research Questions:}
-\begin{itemize}
-    \item What analytics are most actionable for educators—which insights actually change teaching practice?
-    \item How can analytics be presented to avoid overwhelming educators with data while still providing meaningful insights?
-    \item What are the ethical implications of predictive analytics in education, particularly regarding bias and fairness?
-\end{itemize}
+\subsection{Formal User Studies and Broader Evaluation}
 
-\subsection{Augmented Reality Integration}
-
-The location-based discovery feature could be dramatically enhanced through augmented reality (AR), creating unique learning experiences that blend digital and physical worlds.
-
-\textbf{Proposed Enhancements:}
-\begin{itemize}
-    \item \textbf{AR Scavenger Hunts:} Create educational scavenger hunts where learners use smartphones or AR glasses to find and interact with virtual objects placed at real-world locations, answering questions or completing challenges at each site.
-    
-    \item \textbf{Historical Reconstructions:} For history courses, overlay historical scenes onto current locations, allowing learners to "see" what a place looked like in the past while exploring it physically.
-    
-    \item \textbf{Interactive 3D Models:} Enable learners to view and interact with 3D models of complex subjects (molecular structures, anatomical systems, architectural designs) through AR, providing spatial understanding that's difficult to achieve with 2D materials.
-    
-    \item \textbf{Contextual Information Layers:} When learners point their device's camera at real-world objects (plants, buildings, artworks), overlay educational information and quiz questions related to what they're observing.
-\end{itemize}
-
-\textbf{Research Questions:}
-\begin{itemize}
-    \item Does AR-enhanced learning lead to better spatial understanding and knowledge retention?
-    \item What are the accessibility implications of AR-based learning for students with different abilities and technology access?
-    \item How do technical constraints (device capabilities, battery life, network connectivity) impact the practicality of AR learning experiences?
-\end{itemize}
-
-\subsection{Enhanced Security and Trust Ecosystem}
-
-While maintaining the commitment to privacy-respecting design in testing, the platform's security mechanisms can be expanded to cover both academic integrity and the economic integrity of the reward system.
-
-\textbf{Proposed Enhancements:}
-\begin{itemize}
-    \item \textbf{Keystroke Dynamics Analysis:} Analyze typing patterns (timing, rhythm) to detect anomalies that might indicate someone other than the enrolled student is taking the test, without requiring webcam access. Research shows keystroke dynamics can be a reliable biometric indicator.
-    
-    \item \textbf{Mouse Movement Analysis:} Track mouse movement patterns and cursor behavior to identify suspicious patterns (erratic movements suggesting searching for answers, unnatural stillness suggesting absence).
-    
-    \item \textbf{Answer Pattern Analysis:} Use statistical techniques to identify improbable answer patterns (too fast for complex questions, suddenly improved performance, answer sequences that match leaked answer keys).
-    
-    \item \textbf{Blockchain-Based Voucher Verification:} To prevent fraud in the O2O reward system, vouchers could be issued as lightweight Non-Fungible Tokens (NFTs) on a low-cost blockchain. This ensures that rewards are unique, immutable, and easily verifiable by hosts, eliminating the risk of duplicate redemptions or forged QR codes.
-\end{itemize}
-
-\textbf{Research Questions:}
-\begin{itemize}
-    \item Can behavioral biometrics provide reliable integrity monitoring without the privacy concerns of camera surveillance?
-    \item What is the false positive rate for behavioral anomaly detection, and how does it impact student experience?
-    \item How do students perceive different proctoring approaches in terms of fairness and trust?
-\end{itemize}
-
-\subsection{AI-Driven Content Governance}
-
-As the platform scales to support a broader community of hosts and users, maintaining content quality and safety becomes critical. Relying solely on manual user reports is insufficient for a growing ecosystem.
-
-\textbf{Proposed Enhancements:}
-\begin{itemize}
-    \item \textbf{Automated Content Moderation:} Deploy NLP models to pre-screen user-generated quizzes for inappropriate content, hate speech, or sensitive material before they are published, ensuring a safe learning environment.
-    \item \textbf{Quality Assurance AI:} Analyze created quizzes for pedagogical quality (e.g., detecting confusing wording, incorrect answers, or distractor options that are too obvious) and provide automated suggestions for improvement to the host.
-    \item \textbf{Trust Scoring System:} Implement an automated reputation score for hosts based on user ratings, report history, and content quality metrics, helping users identify high-quality, trustworthy content creators.
-\end{itemize}
-
-\subsection{Long-Term Studies and Broader Populations}
-
-The current evaluation was conducted over a short timeframe with a specific demographic. Future research should expand the scope significantly.
+The current evaluation was primarily focused on functional compliance, architectural scalability, and qualitative usability assessment. Future research should expand the scope by incorporating formalized user studies—such as deploying the System Usability Scale (SUS) with dynamic control groups—to statistically validate the generalizability and long-term effectiveness of the platform.
 
 \textbf{Proposed Studies:}
 \begin{itemize}
-    \item \textbf{Longitudinal Engagement Studies:} Track users over a full academic semester or year to determine whether gamification maintains engagement or experiences novelty decay, and to measure actual learning outcomes rather than just engagement metrics.
+    \item \textbf{Semester-Long Engagement Study:} Track user engagement, quiz completion rates, and learning outcomes over a full academic semester to determine whether gamification maintains its motivational effect or experiences novelty decay.
     
-    \item \textbf{Diverse Population Testing:} Conduct studies with K-12 students, non-technical adult learners, international populations, and students with different learning needs to assess generalizability and identify necessary adaptations.
+    \item \textbf{Diverse Population Testing:} Conduct studies with K-12 students, non-technical adult learners, and participants from different cultural contexts to assess whether the platform's effectiveness generalizes across demographics.
     
-    \item \textbf{Institutional Deployment:} Partner with educational institutions for real-world deployment, gathering data on adoption challenges, integration with existing systems, and actual usage patterns at scale.
-    
-    \item \textbf{Learning Outcome Assessment:} Conduct randomized controlled trials comparing learning outcomes (not just engagement) between traditional instruction and TEKUTOKO-enhanced instruction across various subjects and educational levels.
+    \item \textbf{Learning Outcome Assessment:} Design randomized controlled trials that measure actual knowledge retention and transfer (via pre/post-tests) rather than relying solely on engagement and usability metrics, to provide stronger evidence of educational impact.
 \end{itemize}
 
 \textbf{Research Questions:}
@@ -250,30 +136,13 @@ The current evaluation was conducted over a short timeframe with a specific demo
     \item What institutional factors facilitate or hinder adoption of integrated educational technology platforms?
 \end{itemize}
 
-\subsection{Open Source Community and Ecosystem}
-
-To maximize impact and enable broader research, future work could focus on building an open source ecosystem around TEKUTOKO.
-
-\textbf{Proposed Initiatives:}
-\begin{itemize}
-    \item \textbf{Plugin Architecture:} Develop a plugin system allowing third-party developers to extend TEKUTOKO with new question types, gamification mechanics, or integrations with other educational tools.
-    
-    \item \textbf{Content Marketplace:} Create a community marketplace where educators can share and discover question banks, learning missions, and assessment materials, reducing duplication of effort across institutions.
-    
-    \item \textbf{Research API:} Provide APIs and data export capabilities that enable educational researchers to study learning patterns, test new algorithms, and contribute improvements back to the platform.
-    
-    \item \textbf{Multi-Language Support:} Internationalize the platform to support multiple languages and cultural contexts, making it accessible to global educational communities.
-\end{itemize}
-
 \section{Concluding Remarks}
 \label{sec:concluding-remarks}
 
-This thesis has demonstrated that the persistent challenges of engagement, efficiency, integrity, and scalability in e-learning can be effectively addressed through thoughtful integration of modern technologies. By combining gamification grounded in motivational theory, AI-powered content generation with human oversight, privacy-respecting academic integrity monitoring, and scalable microservice architecture, the TEKUTOKO platform provides a comprehensive solution that advances the state of the art in educational technology.
+This thesis has demonstrated that the persistent challenges of engagement, efficiency, integrity, and scalability in e-learning can be effectively addressed through the integration of modern technologies. The TEKUTOKO platform combines gamification grounded in motivational theory, AI-powered content generation with human oversight, privacy-respecting browser-based integrity monitoring, and a scalable microservice architecture into a cohesive system that addresses real needs in digital education.
 
-The empirical validation—showing the platform's ability to handle high concurrency (280 RPS) and the successful execution of all planned features—demonstrates that this integrated approach delivers a robust and reliable educational tool.
+The system evaluation provides concrete evidence for these claims: a noticeable enhancement in user interface dynamics compared to traditional quiz forms, an expedited content creation process via AI integration, sustained throughput of 280 RPS under simulated load, and a reliable browser-based detection mechanism for local system cheating behaviors. The O2O voucher workflow further demonstrates the platform's potential to bridge digital engagement with physical-world interactions.
 
-Perhaps most importantly, this research illustrates a path forward for educational technology in an era of rapid AI advancement and changing pedagogical needs. The future of e-learning lies not in any single technology, but in the \textbf{synergistic integration} of multiple innovations, guided by sound pedagogical principles and empirical evidence, to create learning experiences that are simultaneously more effective, efficient, engaging, and equitable than current approaches.
+The future directions outlined above—AI-enhanced proctoring, scalable search via Elasticsearch, blockchain-based trust for O2O, and longitudinal evaluation—represent natural extensions that build upon the validated foundation. Each direction addresses specific limitations identified during evaluation while maintaining the platform's core design principles of privacy preservation, educator empowerment, and architectural modularity.
 
-The TEKUTOKO platform, while comprehensive in its current form, represents a foundation for continued innovation. The numerous directions for future work outlined in this chapter suggest rich opportunities for extending these capabilities, addressing current limitations, and exploring new possibilities at the intersection of education and technology.
-
-As educational technology continues to evolve, the principles validated through this research—human-centered AI, privacy-preserving security, integrated gamification, and pragmatic scalability—provide valuable guidance for developing the next generation of learning platforms that truly serve the needs of educators and learners in our increasingly digital world.
+As educational technology continues to evolve rapidly, the principles validated through this research—human-centered AI, privacy-preserving security, integrated gamification, and pragmatic scalability—provide guidance for developing the next generation of learning platforms that serve the needs of both educators and learners in an increasingly digital world.
