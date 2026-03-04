@@ -185,6 +185,13 @@ The main components are the React frontend, a core Node.js backend API, a specia
     \item For file uploads, the Node.js backend generates a secure, short-lived "signed URL" from \textbf{Firebase Storage} and sends it to the client.
     \item The client uses this signed URL to upload the file directly to Firebase Storage, offloading bandwidth from the backend server.
     \item The backend orchestrates calls to the external \textbf{Google Gemini API} for question generation, handling prompt engineering and response parsing.
+
+\textbf{Google Gemini API Considerations (Cost, Latency, Privacy):} The integration of a cloud-based LLM introduces specific trade-offs. 
+\begin{itemize}
+    \item \textbf{Cost:} At current usage tiers, Gemini API pricing is manageable for a departmental-scale application, but dynamic scaling costs must be monitored if the platform expands campus-wide.
+    \item \textbf{Latency:} LLM generation is inherently slower than standard database queries. To mitigate this, AI generation is processed asynchronously, and the UI provides active loading states to manage user expectations (as noted in NFR1.1, allowing up to 20 seconds for these requests).
+    \item \textbf{Data Privacy:} Prompts sent to Gemini contain educational material but are stripped of any Personally Identifiable Information (PII) regarding the students or the institution. However, reliance on a proprietary third-party model means the institution does not have absolute control over the data pipeline, a recognized risk in cloud-based AI integrations.
+\end{itemize}
 \end{enumerate}
 
 \subsection{Component and Module Design}
@@ -195,6 +202,8 @@ The main components are the React frontend, a core Node.js backend API, a specia
     \item \textbf{Backend (Node.js/Express):} The central nervous system of the platform. Its responsibilities include providing RESTful API endpoints, managing JWT-based authentication, handling business logic for all core features, and orchestrating calls to other services.
 
     \item \textbf{Backend (Microservice) (Python / FastAPI):} A specialized service responsible for the complex task of processing `.docx` files. Its sole purpose is to accept a document, extract questions, options, and images, and convert them into a structured JSON format ready for serving. It orchestrates external command-line tools like \textbf{Pandoc} for document structure conversion and \textbf{ImageMagick} for image format transcoding (e.g., WMF/EMF to WebP). The processed output is stored in a shared persistent volume (PV) accessible via HTTP, and its metadata is recorded in the database.
+
+\textbf{Justification for Pandoc over Native XML Parsing:} While parsing the native Office Open XML (OOXML) structure of `.docx` files directly is possible, it is highly complex and error-prone due to the vast and often inconsistent nature of the OOXML specification, especially concerning nested elements like equations (MathML) and embedded objects. Pandoc abstracts this complexity, providing a robust, broadly compatible bridge that reliably converts even heavily formatted academic documents into an intermediate representation (like Markdown or HTML) that is structurally predictable and easier to parse into JSON. This choice significantly reduces development overhead and increases system resilience against malformed or older DOCX variants.
 
     \item \textbf{MySQL Database:} A relational database for all structured, persistent data. This includes user accounts, room configurations, questions, submissions, reward vouchers, and proctoring logs. The relational model ensures data integrity.
 
@@ -931,5 +940,5 @@ Key implementation strategies employed include:
     \item \textbf{Human-in-the-Loop AI:} AI-generated content always requires human review before being made available to learners, ensuring quality and accuracy.
 \end{itemize}
 \input{chapters/03-testing-methodology}
-\input{chapters/devops-deployment}       
+\input{chapters/devops-deployment}
 
